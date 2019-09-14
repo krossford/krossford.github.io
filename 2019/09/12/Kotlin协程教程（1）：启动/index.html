@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next gemini use-motion" lang="en">
+<html class="theme-next gemini use-motion" lang="zh-Hans">
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="kotlin, 协程,">
 
 
 
@@ -80,21 +80,21 @@
 
 
 <meta name="description" content="协程协程简单的来说，就是用户态的线程。 emmm，还是不明白对吧，那想象一个这样的场景，如果在一个单核的机器上有两个线程需要执行，因为一次只能执行一个线程里面的代码，那么就会出现线程切换的情况，一会需要执行一下线程A，一会需要执行一下线程B，线程切换会带来一些开销。 假设两个线程，交替执行，如下图所示 线程会因为Thread.sleep方法而进入阻塞状态（就是什么也不会执行），这样多浪费资源啊。">
+<meta name="keywords" content="kotlin, 协程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kotlin协程教程（1）：启动">
 <meta property="og:url" content="http://yoursite.com/2019/09/12/Kotlin协程教程（1）：启动/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="kross">
 <meta property="og:description" content="协程协程简单的来说，就是用户态的线程。 emmm，还是不明白对吧，那想象一个这样的场景，如果在一个单核的机器上有两个线程需要执行，因为一次只能执行一个线程里面的代码，那么就会出现线程切换的情况，一会需要执行一下线程A，一会需要执行一下线程B，线程切换会带来一些开销。 假设两个线程，交替执行，如下图所示 线程会因为Thread.sleep方法而进入阻塞状态（就是什么也不会执行），这样多浪费资源啊。">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p368">
-<meta property="og:image" content="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p369">
-<meta property="og:image" content="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p367">
-<meta property="og:image" content="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p370">
-<meta property="og:updated_time" content="2019-09-12T12:06:55.324Z">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://wx2.sinaimg.cn/mw1024/72ec7a97gy1g6x0op9s2dj21au0e8dl4.jpg">
+<meta property="og:image" content="https://wx2.sinaimg.cn/mw1024/72ec7a97gy1g6x0op9j03j21ak0c60w7.jpg">
+<meta property="og:image" content="https://wx4.sinaimg.cn/mw1024/72ec7a97gy1g6x0op736qj20qm0asq5j.jpg">
+<meta property="og:updated_time" content="2019-09-12T12:44:01.196Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin协程教程（1）：启动">
 <meta name="twitter:description" content="协程协程简单的来说，就是用户态的线程。 emmm，还是不明白对吧，那想象一个这样的场景，如果在一个单核的机器上有两个线程需要执行，因为一次只能执行一个线程里面的代码，那么就会出现线程切换的情况，一会需要执行一下线程A，一会需要执行一下线程B，线程切换会带来一些开销。 假设两个线程，交替执行，如下图所示 线程会因为Thread.sleep方法而进入阻塞状态（就是什么也不会执行），这样多浪费资源啊。">
-<meta name="twitter:image" content="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p368">
+<meta name="twitter:image" content="https://wx2.sinaimg.cn/mw1024/72ec7a97gy1g6x0op9s2dj21au0e8dl4.jpg">
 
 
 
@@ -110,7 +110,7 @@
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     duoshuo: {
       userId: '0',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -130,7 +130,7 @@
 
 
 
-  <title>Kotlin协程教程（1）：启动 | Hexo</title>
+  <title>Kotlin协程教程（1）：启动 | kross</title>
   
 
 
@@ -142,7 +142,7 @@
 
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
   
@@ -160,12 +160,12 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">kross</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
       
-        <p class="site-subtitle"></p>
+        <p class="site-subtitle">一个有趣的程序员</p>
       
   </div>
 
@@ -190,7 +190,37 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
-            Home
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
           </a>
         </li>
       
@@ -200,7 +230,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
             
-            Archives
+            归档
           </a>
         </li>
       
@@ -240,13 +270,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/12/Kotlin协程教程（1）：启动/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="Kross">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="kross">
     </span>
 
     
@@ -264,9 +294,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-12T19:55:42+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-12T19:55:42+08:00">
                 2019-09-12
               </time>
             
@@ -288,6 +318,37 @@
           
 
           
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
 
           
 
@@ -306,9 +367,9 @@
       
         <h2 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h2><p>协程简单的来说，就是用户态的线程。</p>
 <p>emmm，还是不明白对吧，那想象一个这样的场景，如果在一个单核的机器上有两个线程需要执行，因为一次只能执行一个线程里面的代码，那么就会出现线程切换的情况，一会需要执行一下线程A，一会需要执行一下线程B，线程切换会带来一些开销。</p>
-<p>假设两个线程，交替执行，如下图所示<br><img src="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p368" alt="f5586296599855f205be7893ea2b27c3.png"></p>
+<p>假设两个线程，交替执行，如下图所示<br><img src="https://wx2.sinaimg.cn/mw1024/72ec7a97gy1g6x0op9s2dj21au0e8dl4.jpg" alt="f5586296599855f205be7893ea2b27c3.png"></p>
 <p>线程会因为Thread.sleep方法而进入阻塞状态（就是什么也不会执行），这样多浪费资源啊。</p>
-<p>能不能将代码块打包成一个个小小的可执行片段，由一个统一的分配器去分配到线程上去执行呢，如果我的代码块里要求sleep一会，那么就去执行别的代码块，等会再来执行我呢。<br><img src="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p369" alt="1731a54d1f50c900513aca960196e98c.png"></p>
+<p>能不能将代码块打包成一个个小小的可执行片段，由一个统一的分配器去分配到线程上去执行呢，如果我的代码块里要求sleep一会，那么就去执行别的代码块，等会再来执行我呢。<br><img src="https://wx2.sinaimg.cn/mw1024/72ec7a97gy1g6x0op9j03j21ak0c60w7.jpg" alt="1731a54d1f50c900513aca960196e98c.png"></p>
 <p>协程就是这样一个东西，我们作为使用者不需要再去考虑创建一个新线程去执行一坨代码，也不需要关心线程怎么管理。我们需要关心的是，我要异步的执行一坨代码，待会我要拿到它的结果，我要异步的执行很多坨代码，待会我要按某种顺序，或者某种逻辑得到它们的结果。</p>
 <p>总而言之，协程是用户态的线程，它是在用户态实现的一套机制，可以避免线程切换带来的开销，可以高效的利用线程的资源。</p>
 <p>从代码上来讲，也可以更漂亮的写各种异步逻辑。</p>
@@ -335,7 +396,7 @@
 <p>来一起看看效果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">aaaaaaaaa main</span><br><span class="line">0 DefaultDispatcher-worker-1</span><br><span class="line">1 DefaultDispatcher-worker-1</span><br><span class="line">2 DefaultDispatcher-worker-1</span><br><span class="line">3 DefaultDispatcher-worker-4</span><br><span class="line">4 DefaultDispatcher-worker-4</span><br><span class="line">5 DefaultDispatcher-worker-6</span><br><span class="line">6 DefaultDispatcher-worker-7</span><br><span class="line">7 DefaultDispatcher-worker-7</span><br><span class="line">8 DefaultDispatcher-worker-9</span><br><span class="line">9 DefaultDispatcher-worker-1</span><br><span class="line">10 DefaultDispatcher-worker-5</span><br><span class="line">bbbbbbbbb main</span><br></pre></td></tr></table></figure>
 
-<p>通过断点在runBlocking里面的代码，查看这个时候，主线程是什么状态，发现它是进入了WAIT态。<br><img src="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p367" alt="4e2c64f0f3337e7008c151b06493abf3.png"></p>
+<p>通过断点在runBlocking里面的代码，查看这个时候，主线程是什么状态，发现它是进入了WAIT态。<br><img src="https://wx4.sinaimg.cn/mw1024/72ec7a97gy1g6x0op736qj20qm0asq5j.jpg" alt="4e2c64f0f3337e7008c151b06493abf3.png"></p>
 <p>当给runBlocking指定Dispatchers参数时，就仿佛是使用了join方法。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> t = thread &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span>) &#123;</span><br><span class="line">        println(<span class="string">"<span class="variable">$i</span> <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">        Thread.sleep(<span class="number">100</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">t.join()</span><br></pre></td></tr></table></figure>
 
@@ -389,9 +450,6 @@
 <p>本篇介绍了runBlocking方法，它可以在非协程作用域下创建一个协程作用域，它的名字也很好，阻塞的执行，意味着，它会阻塞它的调用线程，直到它内部都执行完毕。</p>
 <p>launch和async都可以在协程作用域下启动协程，launch以Job对象的形式返回协程任务本身，可以通过Job来操作协程，async以Deferred对象的形式返回协程任务，可以获取执行流的返回值。</p>
 <p>GlobalScope.launch会创建一个顶层的协程，它只受限于整个应用的生命周期，不建议使用。</p>
-<hr>
-<p><strong>如果你喜欢这篇文章，欢迎点赞评论打赏</strong><br><strong>更多干货内容，欢迎关注我的公众号：好奇码农君</strong></p>
-<p><img src="evernotecid://944EA088-8890-4EBF-B23B-C680C79495A2/appyinxiangcom/1072265/ENResource/p370" alt="879bb2d5788b223627e265631f3f582b.png"></p>
 
       
     </div>
@@ -407,11 +465,33 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/kotlin-协程/" rel="tag"># kotlin, 协程</a>
+          
+        </div>
+      
 
       
       
       
 
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/12/Kotlin协程教程（2）：协程作用域与各种builder们/" rel="prev" title="Kotlin协程教程（2）：协程作用域与各种builder们">
+                Kotlin协程教程（2）：协程作用域与各种builder们 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
       
 
       
@@ -462,10 +542,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
+            站点概览
           </li>
         </ul>
       
@@ -474,7 +554,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-author-name" itemprop="name">Kross</p>
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -485,14 +565,23 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">1</span>
-                  <span class="site-state-item-name">posts</span>
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
                 </a>
               </div>
             
 
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
             
 
           </nav>
@@ -508,6 +597,12 @@
                         <i class="fa fa-fw fa-github"></i>GitHub</a>
                   </span>
                 
+                  <span class="links-of-author-item">
+                    <a href="kross:krossford@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
             </div>
           
 
@@ -516,9 +611,10 @@
 
           
           
-
+          
           
 
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=28701002&auto=1&height=66"></iframe>
         </div>
       </section>
 
@@ -542,8 +638,11 @@
 
       
 
+
+
     </div>
   </aside>
+  
 
 
         
@@ -556,13 +655,22 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">Kross</span>
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
   
 </div>
 
 
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
 
 
@@ -570,7 +678,7 @@
 
 
 
-  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
 
 
 

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在之前的文章中，已经讲了如何启动协程、协程的作用域是如何组织和工作的以及各种协程构造器（builder）的特性。 本篇将讲解对协程的各种操作，包括挂起、取消、超时、切换上下文等。 挂起123456789fun main()  &amp;#123;    runBlocking(Dispatchers.Default) &amp;#123;        for (i in 0 .. 10) &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin协程教程（3）：操控协程">
+<meta property="og:url" content="http://yoursite.com/2019/09/12/Kotlin协程教程（3）：操控协程/index.html">
+<meta property="og:site_name" content="kross">
+<meta property="og:description" content="在之前的文章中，已经讲了如何启动协程、协程的作用域是如何组织和工作的以及各种协程构造器（builder）的特性。 本篇将讲解对协程的各种操作，包括挂起、取消、超时、切换上下文等。 挂起123456789fun main()  &amp;#123;    runBlocking(Dispatchers.Default) &amp;#123;        for (i in 0 .. 10) &amp;#123;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/09/14/mIcqPwuzVjX1vJ7.png">
+<meta property="og:image" content="https://i.loli.net/2019/09/14/nMhjWg6lAUkXtcZ.png">
+<meta property="og:image" content="https://i.loli.net/2019/09/14/RwoGxFCVYpyKEBD.png">
+<meta property="og:updated_time" content="2019-09-14T02:51:10.199Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kotlin协程教程（3）：操控协程">
+<meta name="twitter:description" content="在之前的文章中，已经讲了如何启动协程、协程的作用域是如何组织和工作的以及各种协程构造器（builder）的特性。 本篇将讲解对协程的各种操作，包括挂起、取消、超时、切换上下文等。 挂起123456789fun main()  &amp;#123;    runBlocking(Dispatchers.Default) &amp;#123;        for (i in 0 .. 10) &amp;#123;">
+<meta name="twitter:image" content="https://i.loli.net/2019/09/14/mIcqPwuzVjX1vJ7.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/12/Kotlin协程教程（3）：操控协程/">
+
+
+
+
+
+  <title>Kotlin协程教程（3）：操控协程 | kross</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kross</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个有趣的程序员</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/12/Kotlin协程教程（3）：操控协程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kross">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kross">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kotlin协程教程（3）：操控协程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-12T21:35:56+08:00">
+                2019-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在之前的文章中，已经讲了如何启动协程、协程的作用域是如何组织和工作的以及各种协程构造器（builder）的特性。</p>
+<p>本篇将讲解对协程的各种操作，包括挂起、取消、超时、切换上下文等。</p>
+<h2 id="挂起"><a href="#挂起" class="headerlink" title="挂起"></a>挂起</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">    runBlocking(Dispatchers.Default) &#123;</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span> .. <span class="number">10</span>) &#123;</span><br><span class="line">            println(<span class="string">"aaaaa <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">            delay(<span class="number">1000</span>) <span class="comment">// 这是一个挂起函数</span></span><br><span class="line">            println(<span class="string">"bbbbb <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>delay就是一个挂起函数，挂起的意思是：<strong>非阻塞的暂停</strong>，与之对应的就是阻塞（的暂停）。比如线程的方法Thread.sleep就是一个阻塞的方法。关于阻塞还是非阻塞，可以简单的理解为：</p>
+<ul>
+<li>阻塞就是cpu不执行后面的代码，需要某种通知告诉线程继续执行。</li>
+<li>非阻塞就是cpu依然在执行线程的代码，非阻塞的暂停只是通过用户态的程序逻辑让代码块不执行而已。</li>
+</ul>
+<p>用图来表示线程阻塞的情况应该是这样：<br><img src="https://i.loli.net/2019/09/14/mIcqPwuzVjX1vJ7.png" alt="屏幕快照 2019-08-29 下午5.02.12.png"></p>
+<p>而在协程中，非阻塞的情况应该是这样：<br><img src="https://i.loli.net/2019/09/14/nMhjWg6lAUkXtcZ.png" alt="屏幕快照 2019-08-29 下午5.15.24.png"></p>
+<p>可以看到，线程的阻塞，那这个线程就真的不去做事情了，必须等到被唤醒了，才会继续执行，在被唤醒之前，这个线程资源可以说就被浪费了，如果我有新的任务，就必须在启动一个新的线程来执行。</p>
+<p>但是协程上的挂起，它会去寻找有没有需要执行的代码块，如果有，就拿来跑，这样就能更高效的利用线程资源。如果挂起后，也没有发现任何可以执行的代码块，同样的也会进入阻塞状态，这一点和线程是一样的。</p>
+<p><strong>在kotlin中，挂起函数只能在协程环境中使用。</strong></p>
+<h2 id="等待与取消"><a href="#等待与取消" class="headerlink" title="等待与取消"></a>等待与取消</h2><p>等待一个协程执行完毕，和线程的API一致，使用join方法就可以了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> job = launch &#123;</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">job.join()</span><br></pre></td></tr></table></figure>
+
+<p>如果需要返回值，也可以使用async来启动协程，使用await方法来等待完成，并取得返回值数据。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> job = async &#123;</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">job.await()</span><br></pre></td></tr></table></figure>
+
+<p>await和join都是挂起函数。</p>
+<p>协程应该被实现为可以被取消的，调用Job的cancel方法可以取消。但是，如果我们写个while(true)的死循环怎么取消呢？</p>
+<p>显然是取消不了的。</p>
+<p>为了能让我们的协程逻辑能被取消，就需要使用到协程的一个属性isActive。</p>
+<p>假设我们有一个协程是下载一个文件，我们想让它能被取消。它可能是这样：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> dlJob = launch &#123;</span><br><span class="line">    <span class="keyword">var</span> isFinished = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">while</span> (!isFinished) &#123;</span><br><span class="line">        <span class="comment">// download ...</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (dlSize == totalSize) &#123;</span><br><span class="line">            isFinished = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样的话，这个协程是无法被取消的，它无法被外侧所操控，我们可以使用isActive来改写一下。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> dlJob = launch &#123;</span><br><span class="line">    <span class="keyword">var</span> isFinished = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">while</span> (!isFinished &amp;&amp; isActive) &#123; <span class="comment">// 注意这里</span></span><br><span class="line">        <span class="comment">// download ...</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dlSize == totalSize) &#123;</span><br><span class="line">            isFinished = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只需要这样，就可以实现取消逻辑了。</p>
+<p>问题也就随之而来，像打开网络连接，读写文件，总是需要去执行一些close的逻辑才是符合规范的，<strong>如果协程被取消，就直接退出了，要如何才能回收打开的资源呢？</strong></p>
+<h3 id="如何回收资源"><a href="#如何回收资源" class="headerlink" title="如何回收资源"></a>如何回收资源</h3><p>可以通过try{…}finally{…}进行回收资源，就像这样：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> dlJob = launch &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> isFinished = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">while</span> (!isFinished &amp;&amp; isActive) &#123; <span class="comment">// 注意这里</span></span><br><span class="line">            <span class="comment">// download ...</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dlSize == totalSize) &#123;</span><br><span class="line">                isFinished = <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;    </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// close something</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当job被取消后，finally方法里面依然会在最后被执行，可以在这里进行一些回收的操作。</p>
+<h2 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h2><p>如果我们期望一个协程最多只能执行多少时间，超过这个时间就要被取消的时候，就可以使用超时逻辑，可以使用withTimeout函数来实现。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">runBlocking(Dispatchers.Default) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 只允许协程执行最多500毫秒</span></span><br><span class="line">        <span class="keyword">val</span> job = withTimeout(<span class="number">500</span>) &#123; </span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                println(<span class="string">"working 1"</span>)</span><br><span class="line">                delay(<span class="number">1000</span>)</span><br><span class="line">                println(<span class="string">"working 2"</span>)</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                println(<span class="string">"finally, I will do something"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        println(<span class="string">"job <span class="variable">$job</span>"</span>) <span class="comment">// 无法被执行到</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: Throwable) &#123;</span><br><span class="line">        println(<span class="string">"out coroutine <span class="variable">$e</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果超时了，则会抛异常，并且，这个函数与runBlocking是一样的，都会阻塞当前线程。上面的代码中，协程外的print不会被执行到。</p>
+<p>如果不想抛异常，可以使用另一个超时函数withTimeoutOrNull。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">runBlocking(Dispatchers.Default) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 只允许协程执行最多500毫秒</span></span><br><span class="line">        <span class="keyword">val</span> job = withTimeoutOrNull(<span class="number">500</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                println(<span class="string">"working 1"</span>)</span><br><span class="line">                delay(<span class="number">1000</span>)</span><br><span class="line">                println(<span class="string">"working 2"</span>)</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                println(<span class="string">"finally, I will do something"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        println(<span class="string">"job <span class="variable">$job</span>"</span>) <span class="comment">// 可以被执行到</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: Throwable) &#123;</span><br><span class="line">        println(<span class="string">"out coroutine <span class="variable">$e</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终运行的结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">working 1</span><br><span class="line">finally, I will do something</span><br><span class="line">job null</span><br></pre></td></tr></table></figure>
+
+<h2 id="切换上下文"><a href="#切换上下文" class="headerlink" title="切换上下文"></a>切换上下文</h2><p>如果我们期望协程的代码在不同的线程中来回跳转，可以使用withContext来实现。（emmmmm，这是什么场景的需求呢？）</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">newSingleThreadContext(<span class="string">"Ctx1"</span>).use &#123; ctx1 -&gt;</span><br><span class="line">    newSingleThreadContext(<span class="string">"Ctx2"</span>).use &#123; ctx2 -&gt;</span><br><span class="line">        runBlocking(ctx1) &#123;</span><br><span class="line">            log(<span class="string">"Started in ctx1"</span>)</span><br><span class="line">            withContext(ctx2) &#123;</span><br><span class="line">                log(<span class="string">"Working in ctx2"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            log(<span class="string">"Back to ctx1"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里直接照搬文档中的示例代码，最后输出的结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[Ctx1 @coroutine#1] Started in ctx1</span><br><span class="line">[Ctx2 @coroutine#1] Working in ctx2</span><br><span class="line">[Ctx1 @coroutine#1] Back to ctx1</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是操控协程的各种方法了。</p>
+<p>挂起函数是协程中定义的概念，只能在协程中使用，挂起的含义是非阻塞的暂停，调度器会寻找需要运行的协程放到线程中去执行，如果找不到任何需要执行的协程，才会将线程阻塞。</p>
+<p>协程是可以被取消的，任何系统提供的挂起函数内部都有取消的逻辑，如果自己的协程想要可以被取消，就必须通过isActive变量来编写逻辑。</p>
+<p>取消后的协程总是会执行finally代码块，可以在这里进行一些资源回收的操作。</p>
+<p>如果希望控制协程的工作时长，可以使用withTimeout来限制协程。</p>
+<p>通过withContext函数来将逻辑切换到其他的线程上去。</p>
+<p>之前的表格，就可以得到进一步的扩展了</p>
+<p><img src="https://i.loli.net/2019/09/14/RwoGxFCVYpyKEBD.png" alt="屏幕快照 2019-08-29 下午7.24.26.png"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/12/Kotlin协程教程（2）：协程作用域与各种builder们/" rel="next" title="Kotlin协程教程（2）：协程作用域与各种builder们">
+                <i class="fa fa-chevron-left"></i> Kotlin协程教程（2）：协程作用域与各种builder们
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kross</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/krossford" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="kross:krossford@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+          
+          
+
+          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=28701002&auto=1&height=66"></iframe>
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#挂起"><span class="nav-number">1.</span> <span class="nav-text">挂起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#等待与取消"><span class="nav-number">2.</span> <span class="nav-text">等待与取消</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何回收资源"><span class="nav-number">2.1.</span> <span class="nav-text">如何回收资源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超时"><span class="nav-number">3.</span> <span class="nav-text">超时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#切换上下文"><span class="nav-number">4.</span> <span class="nav-text">切换上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kross</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
