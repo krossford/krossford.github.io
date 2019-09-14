@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,多线程,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="多线程在开发知识中是一个很重要的部分，然而实际生产中却很少遇到真正需要自己去处理多线程编程里的那些复杂细节和问题，因为很多时候，都有一套“架构”或者一些“框架”帮大部分业务程序员隐藏了多线程的细节，大多时候只需要简单的实现各种业务逻辑即可。 今天来理一理wait, notify, join, yield这四个方法的作用。 这4个方法，其中wait, notify都是Object的方法，join是T">
+<meta name="keywords" content="java,多线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程编程：wait, notify, join, yield都有啥用？">
+<meta property="og:url" content="http://yoursite.com/2019/09/14/多线程编程：wait, notify, join, yield都有啥用？/index.html">
+<meta property="og:site_name" content="kross">
+<meta property="og:description" content="多线程在开发知识中是一个很重要的部分，然而实际生产中却很少遇到真正需要自己去处理多线程编程里的那些复杂细节和问题，因为很多时候，都有一套“架构”或者一些“框架”帮大部分业务程序员隐藏了多线程的细节，大多时候只需要简单的实现各种业务逻辑即可。 今天来理一理wait, notify, join, yield这四个方法的作用。 这4个方法，其中wait, notify都是Object的方法，join是T">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/09/14/tSyYkiqXITKLZbl.png">
+<meta property="og:updated_time" content="2019-09-14T06:02:59.791Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程编程：wait, notify, join, yield都有啥用？">
+<meta name="twitter:description" content="多线程在开发知识中是一个很重要的部分，然而实际生产中却很少遇到真正需要自己去处理多线程编程里的那些复杂细节和问题，因为很多时候，都有一套“架构”或者一些“框架”帮大部分业务程序员隐藏了多线程的细节，大多时候只需要简单的实现各种业务逻辑即可。 今天来理一理wait, notify, join, yield这四个方法的作用。 这4个方法，其中wait, notify都是Object的方法，join是T">
+<meta name="twitter:image" content="https://i.loli.net/2019/09/14/tSyYkiqXITKLZbl.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/14/多线程编程：wait, notify, join, yield都有啥用？/">
+
+
+
+
+
+  <title>多线程编程：wait, notify, join, yield都有啥用？ | kross</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kross</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">一个有趣的程序员</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/14/多线程编程：wait, notify, join, yield都有啥用？/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kross">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kross">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">多线程编程：wait, notify, join, yield都有啥用？</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-14T14:00:04+08:00">
+                2019-09-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>多线程在开发知识中是一个很重要的部分，然而实际生产中却很少遇到真正需要自己去处理多线程编程里的那些复杂细节和问题，因为很多时候，都有一套“架构”或者一些“框架”帮大部分业务程序员隐藏了多线程的细节，大多时候只需要简单的实现各种业务逻辑即可。</p>
+<p>今天来理一理wait, notify, join, yield这四个方法的作用。</p>
+<p>这4个方法，其中wait, notify都是Object的方法，join是Thread的实例方法，yield是Thread的静态方法。</p>
+<p>wait, notify在之前的文章：xxxx中我已经提到过，wait将线程转换为Waiting状态，notify唤醒一个在Waiting状态的线程。</p>
+<p>咱们一个个来说。</p>
+<h2 id="Object-wait"><a href="#Object-wait" class="headerlink" title="Object.wait"></a>Object.wait</h2><p>文档上是这样描述的：</p>
+<blockquote>
+<p>Causes the current thread to wait until either another thread invokes the Object#notify() method or the Object#notifyAll() method for this object, or a specified amount of time has elapsed.</p>
+</blockquote>
+<p>它是说：导致当前线程进入waiting，直到另一个线程调用notify或者notifyAll方法来唤醒它，或者是指定了等待时间。</p>
+<p>也就是用wait的有参的重载方法<code>wait(long)</code>，可以让线程至多等待一定的时间，这个时间过了之后，线程就自行恢复runnable状态了。</p>
+<p>正确的使用方法是在synchronized里面使用，并且使用一个循环将它包起来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">    <span class="keyword">while</span> (!condition) &#123;</span><br><span class="line">        lock.wait() <span class="comment">// 进入 waiting 状态, 这行代码之后的代码将不会被执行</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为什么要使用一个循环呢？因为通常情况下，按照逻辑的要求是达到某种条件之前，我这个线程就不工作了，当条件满足后，别的线程来通知我，当别的线程通知我之后呢，我还要再check一下这个条件是否满足，如果不满足，还要继续进入waiting状态，这样逻辑上才是比较完备的。</p>
+<h2 id="Object-notify"><a href="#Object-notify" class="headerlink" title="Object.notify"></a>Object.notify</h2><blockquote>
+<p>Wakes up a single thread that is waiting on this object’s monitor. If any threads are waiting on this object, one of them is chosen to be awakened. The choice is arbitrary and occurs at the discretion of the implementation. A thread waits on an object’s monitor by calling one of the {@code wait} methods.</p>
+</blockquote>
+<p>唤醒一个waiting态的线程，这个线程呢，必须是用同一把锁进入waiting态的。</p>
+<p>所以，notify方法的通常使用方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">    lock.notify()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>有人可能要问了：wait和notify不在synchronized里面使用会怎么样？</strong><br>我也好奇了这一点，然后实验了一把，发现会抛异常，运行时直接报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalMonitorStateException</span><br><span class="line">at java.lang.Object.wait(Native Method)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Thread-join"><a href="#Thread-join" class="headerlink" title="Thread.join"></a>Thread.join</h2><p>join方法是一个实例方法，先看看文档的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Waits for this thread to die.</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">join</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span></span><br></pre></td></tr></table></figure>
+
+<p>它的意思是，调用threadA.join()的线程，要进入waiting状态，一直到线程threadA执行完毕。<br>比如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       Thread t1 = <span class="keyword">new</span> Thread(…);</span><br><span class="line">       t1.join();</span><br><span class="line">       <span class="comment">// 这行代码必须要等t1全部执行完毕，才会执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Thread-yield"><a href="#Thread-yield" class="headerlink" title="Thread.yield"></a>Thread.yield</h2><blockquote>
+<p> A hint to the scheduler that the current thread is willing to yield its current use of a processor. The scheduler is free to ignore<br> this hint. Yield is a heuristic attempt to improve relative progression between threads that would otherwise over-utilize a CPU.<br> Its use should be combined with detailed profiling and benchmarking to ensure that it actually has the desired effect.</p>
+<p>public static native void yield();</p>
+</blockquote>
+<p>这个方法的意思是，告诉调度器，当前线程愿意放弃cpu的使用，愿意将cpu让给其它的线程。</p>
+<p>用人话说就是：哎呀，我现在已经运行了那么久了，把机会留给别人吧，cpu你快去运行一下其他线程吧，我歇一会。</p>
+<p>但是按文档上的描述，这只是对调度器的一个暗示。也就是说，具体会发生什么，还要看调度器是如何处理的。</p>
+<p><img src="https://i.loli.net/2019/09/14/tSyYkiqXITKLZbl.png" alt="屏幕快照 2019-08-10 00.00.43.png"></p>
+<p>所以我又来捏造需求了。我们先看看下面的代码会发生什么：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] arg)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    t1.start();</span><br><span class="line">    t2.start();</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个线程一起给count自增10000次，由于没有加锁，和自增也不是一个原子操作，这样就会导致，两个线程都自增10000次，最后count的结果，一定是小于20000的一个数。</p>
+<p>等等！等一下！自增不是原子操作是怎么回事，这代码不是只有一行吗？</p>
+<p>大家都知道代码最终会被翻译为指令，由cpu去执行，一条指令是原子的，但是一行代码被翻译成多条指令，那么也就会被多个线程交替进行，这也就是多线程编程常见的问题。</p>
+<p>自增的代码可以用过idea的工具查看到。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GETSTATIC thread/TestThreadFunction.count : I</span><br><span class="line">ICONST_1</span><br><span class="line">IADD</span><br><span class="line">PUTSTATIC thread/TestThreadFunction.count : I</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，它被拆分成了四条执行去执行。</p>
+<p>这个代码的执行结果就是，最后的结果是小于20000的。</p>
+<p>那么，我们现在设计一下，我希望通过上面提到的方法，让两个线程交替的执行，这样不就可以稳定的自增到20000了吗？</p>
+<p>具体怎么做呢，看下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Object object = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] arg)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">                    <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                        object.notify();</span><br><span class="line">                        object.wait();</span><br><span class="line">                    &#125;</span><br><span class="line">                    count++;</span><br><span class="line">                    System.out.println(<span class="string">"t1 "</span> + count);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                    object.notify();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">                    <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                        object.notify();</span><br><span class="line">                        object.wait();</span><br><span class="line">                    &#125;</span><br><span class="line">                    count++;</span><br><span class="line">                    System.out.println(<span class="string">"t2 "</span> + count);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                    object.notify();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    t1.start();</span><br><span class="line">    t2.start();</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">"count: "</span> + count);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先第一个线程（t1）进入了同步锁object，调用notify方法，通知别的线程起来干活，但此时没有任何作用，接下来调用wait，让自己进入waiting状态。</p>
+<p>接着第二个线程（t2）自然而然就要干起活来，它先调用了notify方法，触发了一次唤醒，然后调用wait方法也进入了waiting状态。</p>
+<p>t1收到了notify的唤醒，退出临界区，开始给count自增，本次循环结束，重新notify，wait后进入waiting状态。</p>
+<p>t2被这个notify所唤醒，开始给count自增，本次循环结束，接着重复一样的过程。</p>
+<p>……</p>
+<p>就这样，两个线程交替的执行了起来。</p>
+<p>最终我们得到的结果是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">count: 0</span><br><span class="line">t1 1</span><br><span class="line">t2 2</span><br><span class="line">t1 3</span><br><span class="line">t2 4</span><br><span class="line">t1 5</span><br><span class="line">t2 6</span><br><span class="line">t1 7</span><br><span class="line">t2 8</span><br><span class="line">t1 9</span><br><span class="line">t2 10</span><br><span class="line">t1 11</span><br><span class="line">... // 此处省略</span><br><span class="line">t2 19998</span><br><span class="line">t1 19999</span><br><span class="line">t2 20000</span><br></pre></td></tr></table></figure>
+
+<p>我们发现一个问题，就是主线程的最后面的输出，先执行了，输出了0，这是怎么回事呢？</p>
+<p>这是由于两个工作线程还没开始工作，主线程就执行完毕了。那么，我们希望在两个线程执行完毕后，主线程再输出一下结果，这个事情可以做到吗？</p>
+<p><strong>我希望一个线程工作完毕了，我再继续执行</strong></p>
+<p>这个不就是join的作用吗？</p>
+<p>于是我们的代码可以在start两个线程后，加上join，再输出。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">...<span class="comment">// 这部分相同，省略</span></span><br><span class="line">t1.start();</span><br><span class="line">t2.start();</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    t1.join();</span><br><span class="line">    t2.join();</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"count: "</span> + count);</span><br></pre></td></tr></table></figure>
+
+<p>这样的执行结果就是主线程的输出在最后了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">... // 省略</span><br><span class="line">t1 19997</span><br><span class="line">t2 19998</span><br><span class="line">t1 19999</span><br><span class="line">t2 20000</span><br><span class="line">count: 20000</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们探讨一下Thread.yield的实际作用</p>
+<p>先将代码改写为下面简单的，通过synchronized关键字进行同步的写法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                count++;</span><br><span class="line">                System.out.println(<span class="string">"t111111 "</span> + count);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                count++;</span><br><span class="line">                System.out.println(<span class="string">"t2 "</span> + count);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过代码的输出，观察到，线程的调度是非常的紧密的，就是说，总是一段时间t1一直在执行，然后t2再紧密的执行一段时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">... // 省略</span><br><span class="line">t111111 153</span><br><span class="line">t111111 154</span><br><span class="line">t111111 155</span><br><span class="line">t111111 156</span><br><span class="line">t111111 157</span><br><span class="line">t111111 158</span><br><span class="line">t111111 159</span><br><span class="line">t111111 160</span><br><span class="line">t111111 161</span><br><span class="line">t111111 162</span><br><span class="line">t111111 163</span><br><span class="line">t111111 164</span><br><span class="line">t111111 165</span><br><span class="line">t111111 166</span><br><span class="line">t2 167</span><br><span class="line">t2 168</span><br><span class="line">t2 169</span><br><span class="line">t2 170</span><br><span class="line">t2 171</span><br><span class="line">t2 172</span><br><span class="line">t2 173</span><br><span class="line">t2 174</span><br><span class="line">t2 175</span><br><span class="line">t2 176</span><br><span class="line">t2 177</span><br><span class="line">t2 178</span><br><span class="line">t2 179</span><br><span class="line">t2 180</span><br><span class="line">t2 181</span><br><span class="line">t2 182</span><br><span class="line">... // 省略</span><br></pre></td></tr></table></figure>
+
+<p>t1连续执行了166次，才轮到t2来执行。一旦t2开始执行，就会一直抢占cpu一段时间。</p>
+<p>我们现在加上Thread.yield方法试试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">        count++;</span><br><span class="line">        System.out.println(<span class="string">"t2 "</span> + count);</span><br><span class="line">    &#125;</span><br><span class="line">    Thread.yield(); <span class="comment">// 加在这里</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大致的可以看到，线程对cpu的抢占，变得更加谦让了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">t111111 1</span><br><span class="line">t2 2</span><br><span class="line">t2 3</span><br><span class="line">t2 4</span><br><span class="line">t111111 5</span><br><span class="line">t2 6</span><br><span class="line">t2 7</span><br><span class="line">t2 8</span><br><span class="line">t111111 9</span><br><span class="line">t111111 10</span><br><span class="line">t2 11</span><br><span class="line">t2 12</span><br><span class="line">t111111 13</span><br><span class="line">t111111 14</span><br><span class="line">t111111 15</span><br><span class="line">t2 16</span><br><span class="line">t2 17</span><br><span class="line">t2 18</span><br><span class="line">t111111 19</span><br><span class="line">t111111 20</span><br><span class="line">t2 21</span><br><span class="line">t111111 22</span><br><span class="line">t2 23</span><br><span class="line">t2 24</span><br><span class="line">t111111 25</span><br><span class="line">t2 26</span><br><span class="line">t111111 27</span><br><span class="line">t2 28</span><br><span class="line">t111111 29</span><br><span class="line">t111111 30</span><br><span class="line">t2 31</span><br><span class="line">t2 32</span><br><span class="line">... // 省略</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Object.wait让线程进入wait状态，必须要其他线程唤醒，或者是传入了时间长度的wait方法，将至多等待传入的时间长度后自动唤醒。</p>
+<p>Object.notify通知任一一个进入等待状态的线程，notifyAll通知所有</p>
+<p>Thread.join让调用线程阻塞在这个方法上，直到join的线程完全执行完毕，调用线程才会继续执行。</p>
+<p>Thread.yield通知调度器，主动让出对cpu的占用。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/多线程/" rel="tag"># 多线程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/14/线程有哪些状态？每个状态是什么意思？又是如何切换的？/" rel="next" title="线程有哪些状态？每个状态是什么意思？又是如何切换的？">
+                <i class="fa fa-chevron-left"></i> 线程有哪些状态？每个状态是什么意思？又是如何切换的？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kross</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/krossford" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="kross:krossford@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-wait"><span class="nav-number">1.</span> <span class="nav-text">Object.wait</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-notify"><span class="nav-number">2.</span> <span class="nav-text">Object.notify</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-join"><span class="nav-number">3.</span> <span class="nav-text">Thread.join</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-yield"><span class="nav-number">4.</span> <span class="nav-text">Thread.yield</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kross</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">10.5k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

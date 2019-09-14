@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="kotlin,协程,">
 
 
 
@@ -80,6 +80,7 @@
 
 
 <meta name="description" content="在之前的文章中，已经讲了如何启动协程、协程的作用域是如何组织和工作的以及各种协程构造器（builder）的特性。 本篇将讲解对协程的各种操作，包括挂起、取消、超时、切换上下文等。 挂起123456789fun main()  &amp;#123;    runBlocking(Dispatchers.Default) &amp;#123;        for (i in 0 .. 10) &amp;#123;">
+<meta name="keywords" content="kotlin,协程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kotlin协程教程（3）：操控协程">
 <meta property="og:url" content="http://yoursite.com/2019/09/12/Kotlin协程教程（3）：操控协程/index.html">
@@ -89,7 +90,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/09/14/mIcqPwuzVjX1vJ7.png">
 <meta property="og:image" content="https://i.loli.net/2019/09/14/nMhjWg6lAUkXtcZ.png">
 <meta property="og:image" content="https://i.loli.net/2019/09/14/RwoGxFCVYpyKEBD.png">
-<meta property="og:updated_time" content="2019-09-14T02:51:10.199Z">
+<meta property="og:updated_time" content="2019-09-14T05:30:42.490Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin协程教程（3）：操控协程">
 <meta name="twitter:description" content="在之前的文章中，已经讲了如何启动协程、协程的作用域是如何组织和工作的以及各种协程构造器（builder）的特性。 本篇将讲解对协程的各种操作，包括挂起、取消、超时、切换上下文等。 挂起123456789fun main()  &amp;#123;    runBlocking(Dispatchers.Default) &amp;#123;        for (i in 0 .. 10) &amp;#123;">
@@ -164,7 +165,7 @@
       </a>
     </div>
       
-        <p class="site-subtitle">一个有趣的程序员</p>
+        <h1 class="site-subtitle" itemprop="description">一个有趣的程序员</h1>
       
   </div>
 
@@ -283,7 +284,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Kotlin协程教程（3）：操控协程</h1>
+          <h2 class="post-title" itemprop="name headline">Kotlin协程教程（3）：操控协程</h2>
         
 
         <div class="post-meta">
@@ -327,7 +328,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  
+                  1.5k
                 </span>
               
 
@@ -343,7 +344,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  
+                  6
                 </span>
               
             </div>
@@ -439,6 +440,14 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/kotlin/" rel="tag"># kotlin</a>
+          
+            <a href="/tags/协程/" rel="tag"># 协程</a>
+          
+        </div>
+      
 
       
       
@@ -457,6 +466,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/14/volatile的作用及正确的使用模式/" rel="prev" title="volatile的作用及正确的使用模式">
+                volatile的作用及正确的使用模式 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -533,7 +546,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -545,10 +558,10 @@
               
               
               <div class="site-state-item site-state-tags">
-                
-                  <span class="site-state-item-count">1</span>
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
-                
+                </a>
               </div>
             
 
@@ -580,9 +593,7 @@
           
           
           
-          
 
-          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=28701002&auto=1&height=66"></iframe>
         </div>
       </section>
 
@@ -606,11 +617,8 @@
 
       
 
-
-
     </div>
   </aside>
-  
 
 
         
@@ -633,7 +641,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count"></span>
+    <span title="Site words total count">10.5k</span>
   
 </div>
 
