@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="android,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="##自问自答的两个问题 在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 中线程间通信原理分析：Looper, MessageQueue, Handler">
+<meta property="og:url" content="http://yoursite.com/2016/08/04/Android 中线程间通信原理分析：Looper, MessageQueue, Handler/index.html">
+<meta property="og:site_name" content="kross">
+<meta property="og:description" content="##自问自答的两个问题 在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20160316115827197">
+<meta property="og:updated_time" content="2019-09-14T10:05:15.608Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 中线程间通信原理分析：Looper, MessageQueue, Handler">
+<meta name="twitter:description" content="##自问自答的两个问题 在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160316115827197">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/08/04/Android 中线程间通信原理分析：Looper, MessageQueue, Handler/">
+
+
+
+
+
+  <title>Android 中线程间通信原理分析：Looper, MessageQueue, Handler | kross</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kross</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">一个有趣的程序员</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/04/Android 中线程间通信原理分析：Looper, MessageQueue, Handler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kross">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kross">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Android 中线程间通信原理分析：Looper, MessageQueue, Handler</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-04T18:04:33+08:00">
+                2016-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  19
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>##自问自答的两个问题</p>
+<p>在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：</p>
+<ol>
+<li><strong>这一套东西搞出来是为了解决什么问题呢？</strong></li>
+<li><strong>如果让我们来解决这个问题该怎么做？</strong></li>
+</ol>
+<p>以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。</p>
+<p>第一个问题：google的程序员们搞出这一套东西是为了解决什么问题的？这个问题很显而易见，为了解决线程间通信的问题。我们都知道，Android的UI/View这一套系统是运行在主线程的，并且这个主线程是死循环的，来看看具体的证据吧。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ActivityThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">		</span><br><span class="line">		Looper.loop();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Main thread loop unexpectedly exited"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上面的代码示例所示，<code>ActivityThread.main()</code>方法作为Android程序的入口，里面我省略了一些初始化的操作，然后就执行了一句<code>Looper.loop()</code>方法，就没了，再下一行就抛异常了。</p>
+<p><code>loop()</code>方法里面实际上就是一个死循环，一直在执行着，不断的从一个MQ（MessageQueue，后面我都缩写成MQ了）去取消息，如果有的话，那么就执行它或者让它的发送者去处理它。</p>
+<p>一般来说，主线程循环中都是执行着一些快速的UI操作，当你有手touch屏幕的时候，系统会产生事件，UI会处理这些事件，这些事件都会在主线程中执行，并快速的响应着UI的变化。如果主线程上发生一些比较耗时的操作，那么它后面的方法就无法得到执行了，那么就会出现卡顿，不流畅。</p>
+<p>因此，<strong>Android并不希望你在主线程去做一些耗时的操作</strong>，这里对“耗时”二字进行朴素的理解就行了，就是执行起来需要消耗的时间比较多的操作。比如读写文件，小的文件也许很快，但你无法预料文件的大小，再比如访问网络，再比如你需要做一些复杂的计算等等。</p>
+<p>为了不阻碍主线程流畅的执行，我们就必须在需要的时候把耗时的操作放到其他线程上去，当其他线程完成了工作，再给一个通知（或许还带着数据）给到主线程，让主线程去更新UI什么的，当然了，如果你要的耗时操作只是默默无闻的完成就行了，并不需要通知UI，那么你完全不需要给通知给到UI线程。这就是<strong>线程间的通信</strong>，其他线程做耗时操作，完成了告诉UI线程，让它进行更新。为了解决这个问题，Android系统给我们提供了这样一套方案来解决。</p>
+<p>第二个问题：如果让我们来想一套方案来解决这个线程间通信的问题，该怎么做呢？</p>
+<p>先看看我们现在已经有的东西，我们有一个一直在循环的主线程，它实现起来大概是这个样子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OurSystem</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			<span class="comment">//do something...</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>为什么主线程要一直死循环的执行呢？</p>
+<p>关于这一点，我个人并没有特别透彻的认知，但我猜测，对于有GUI的系统/程序，应该都有一个不断循环的主线程，因为这个GUI程序肯定是要跟人进行交互的，也就是说，需要等待用户的输入，比如触碰屏幕，动动鼠标，敲敲键盘什么的，这些事件肯定是硬件层先获得一个响应/信号，然后会不断的向上封装传递。</p>
+<p>如果说我们一碰屏幕，一碰鼠标，就开启一个新线程去处理UI上的变化，首先，这当然是可以的！UI在什么线程上更新其实都是可以的嘛，并不是说一定要在主线程上更新，这是系统给我设的一个套子。然后，问题也会复杂的多，如果我们快速的点击2下鼠标，那么一瞬间就开启了两个新线程去执行，那么这两个线程的执行顺序呢？两个独立的线程，我们是无法保证说先启动的先执行。</p>
+<p>所以第一个问题就是执行顺序的问题。</p>
+<p>第二个问题就是同步，几个相互独立的线程如果要处理同一个资源，那么造成的结果都是令人困惑，不受控制的。另一方面强行给所有的操作加上同步锁，在效率上也会有问题。</p>
+<p>为了解决顺序执行的问题，非常容易就想到的一种方案是事件队列，各种各样的事件先进入到一个队列中，然后有个东西会不断的从队列中获取，这样第一个事件一定在第二个事件之前被执行，这样就保证了顺序，如果我们把这个“取事件”的步骤放在一个线程中去做，那么也顺便解决了资源同步的问题。</p>
+<p>因此，对于GUI程序会有一个一直循环的（主）线程，可能就是这样来的吧。</p>
+</blockquote>
+<p>这是一个非常纯净的死循环，我们想要做一些事情的话，就得让它从一个队列里面获取一些事情来做，就像打印机一样。因此我们再编写一个消息队列类，来存放消息。消息队列看起来应该是这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> class <span class="title">OurMessageQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> LinkedList&lt;Message&gt; mQueue = <span class="keyword">new</span> LinkedList&lt;Message&gt;();</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 放进去一条消息</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 取出一条消息</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Message <span class="title">deQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 判断是否为空队列</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们的循环就需要改造成能从消息队列里获取消息，并能够根据消息来做些事情了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OurSystem</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 初始化消息队列</span></span><br><span class="line">		OurMessageQueue mq = ...</span><br><span class="line">	</span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			<span class="keyword">if</span> (!mq.isEmpty()) &#123;</span><br><span class="line">				Message msg = mq.deQueue();</span><br><span class="line">				<span class="comment">//do something...</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们假象一下，我们需要点击一下按钮，然后去下载一个超级大的文件，下载完成后，我们再让主线程显示文件的大小。</p>
+<p>首先，按一下按钮，这个事件应该会被触发到主线程来（具体怎么来的我还尚不清楚，但应该是先从硬件开始，然后插入到消息队列中，主线程的循环就能获取到了），然后主线程开启一个新的异步线程来进行下载，下载完成后再通知主线程来更新，代码看上去是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 脑补的硬件设备……</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OurDevice</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 硬件设备可能有一个回调</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">		<span class="comment">// 先拿到同一个消息队列，并把我们要做的事情插入队列中</span></span><br><span class="line">		OurMessageQueue mq = ...</span><br><span class="line">		Message msg = Message.newInstance(<span class="string">"download a big file"</span>);</span><br><span class="line">		mq.enQueue(msg);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后，我们的主线程循环获取到了消息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OurSystem</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 初始化消息队列</span></span><br><span class="line">		OurMessageQueue mq = ...</span><br><span class="line">	</span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			<span class="keyword">if</span> (!mq.isEmpty()) &#123;</span><br><span class="line">				Message msg = mq.deQueue();</span><br><span class="line">				</span><br><span class="line">				<span class="comment">// 是一条通知我们下载文件的消息</span></span><br><span class="line">				<span class="keyword">if</span> (msg.isDownloadBigFile()) &#123;</span><br><span class="line">				</span><br><span class="line">					<span class="comment">// 开启新线程去下载文件</span></span><br><span class="line">					<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">						<span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">							<span class="comment">// download a big file, may cast 1 min...</span></span><br><span class="line">							<span class="comment">// ...</span></span><br><span class="line">							<span class="comment">// ok, we finished download task.</span></span><br><span class="line">							</span><br><span class="line">							<span class="comment">// 获取到同一个消息队列</span></span><br><span class="line">							OurMessageQueue mq = ...</span><br><span class="line">							</span><br><span class="line">							<span class="comment">// 消息入队</span></span><br><span class="line">							mq.enQueue(Message.newInstance(<span class="string">"finished download"</span>));</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;).start();</span><br><span class="line">				&#125;</span><br><span class="line">				</span><br><span class="line">				<span class="comment">// 是一条通知我们下载完成的消息</span></span><br><span class="line">				<span class="keyword">if</span> (msg.isFilishedDownload()) &#123;</span><br><span class="line">					<span class="comment">// update UI!</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意，主线程循环获取到消息的时候，显示对消息进行的判断分类，不同的消息应该有不同的处理。在我们获取到一个下载文件的消息时，开启了一个新的线程去执行，耗时操作与主线程就被隔离到不同的执行流中，当完成后，新线程中用同一个消息队列发送了一个通知下载完成的消息，主线程循环获取到后，里面就可以更新UI。</p>
+<p>这样就是一个我随意脑补的，简单的跨线程通信的方案。</p>
+<p>有如下几点是值得注意的：</p>
+<ul>
+<li>主线程是死循环的从消息队列中获取消息。</li>
+<li>我们要将消息发送到主线程的消息队列，我们需要通过某种方法能获取到主线程的消息队列对象</li>
+<li>消息（Message）的结构应该如何设计呢？</li>
+</ul>
+<h2 id="Android-中的线程间通信方案"><a href="#Android-中的线程间通信方案" class="headerlink" title="Android 中的线程间通信方案"></a>Android 中的线程间通信方案</h2><h3 id="Looper"><a href="#Looper" class="headerlink" title="Looper"></a>Looper</h3><blockquote>
+<p><a href="http://www.grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/5.1.1_r1/android/os/Looper.java#Looper" target="_blank" rel="noopener">android.os.Looper from Grepcode</a></p>
+</blockquote>
+<p>Android中有一个<code>Looper</code>对象，顾名思义，直译过来就是循环的意思，<code>Looper</code>也确实干了维持循环的事情。</p>
+<p>Looper的代码是非常简单的，去掉注释也就300多行。在官方文档的注释中，它推荐我们这样来使用它：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LooperThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> Handler mHandler;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Looper.prepare();</span><br><span class="line"></span><br><span class="line">		mHandler = <span class="keyword">new</span> Handler() &#123;</span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">			  <span class="comment">// process incoming messages here</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		Looper.loop();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先来看看prepare方法干了什么。</p>
+<h4 id="Looper-prepare"><a href="#Looper-prepare" class="headerlink" title="Looper.prepare()"></a><code>Looper.prepare()</code></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">prepare</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	prepare(<span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">prepare</span><span class="params">(<span class="keyword">boolean</span> quitAllowed)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (sThreadLocal.get() != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Only one Looper may be created per thread"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	sThreadLocal.set(<span class="keyword">new</span> Looper(quitAllowed));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意<code>prepare(boolean)</code>方法中，有一个<code>sThreadLocal</code>变量，这个变量有点像一个哈希表，它的key是当前的线程，也就是说，它可以存储一些数据/引用，这些数据/引用是与当前线程是一一对应的，在这里的作用是，它判断一下当前线程是否有<code>Looper</code>这个对象，如果有，那么就报错了，”Only one Looper may be created per thread”，一个线程只允许创建一个<code>Looper</code>，如果没有，就new一个新的塞进这个哈希表中。然后它调用了<code>Looper</code>的构造方法。</p>
+<h4 id="Looper-的构造方法"><a href="#Looper-的构造方法" class="headerlink" title="Looper 的构造方法"></a>Looper 的构造方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">Looper</span><span class="params">(<span class="keyword">boolean</span> quitAllowed)</span> </span>&#123;</span><br><span class="line">	mQueue = <span class="keyword">new</span> MessageQueue(quitAllowed);</span><br><span class="line">	mThread = Thread.currentThread();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>Looper</code>的构造方法中，很关键的一句，它new了一个<code>MessageQueue</code>对象，并自己维持了这个MQ的引用。</p>
+<p>此时<code>prepare()</code>方法的工作就结束了，接下来需要调用静态方法<code>loop()</code>来启动循环。</p>
+<h4 id="Looper-loop"><a href="#Looper-loop" class="headerlink" title="Looper.loop()"></a><code>Looper.loop()</code></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Looper me = myLooper();</span><br><span class="line">    <span class="keyword">if</span> (me == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"No Looper; Looper.prepare() wasn't called on this thread."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> MessageQueue queue = me.mQueue;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        Message msg = queue.next(); <span class="comment">// might block</span></span><br><span class="line">        <span class="keyword">if</span> (msg == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// No message indicates that the message queue is quitting.</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        msg.target.dispatchMessage(msg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>loop()方法，我做了省略，省去了一些不关心的部分。剩下的部分非常的清楚了，首先调用了静态方法myLooper()获取一个Looper对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Looper <span class="title">myLooper</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sThreadLocal.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>myLooper()</code>同样是静态方法，它是直接从这个<code>ThreadLocal</code>中去获取，这个刚刚说过了，它就类似于一个哈希表，key是当前线程，因为刚刚<code>prepare()</code>的时候，已经往里面set了一个<code>Looper</code>，那么此时应该是可以get到的。拿到当前线程的<code>Looper</code>后，接下来，<code>final MessageQueue queue = me.mQueue;</code>拿到与这个<code>Looper</code>对应的MQ，拿到了MQ后，就开启了死循环，对消息队列进行不停的获取，当获取到一个消息后，它调用了<code>Message.target.dispatchMessage()</code>方法来对消息进行处理。</p>
+<p>Looper的代码看完了，我们得到了几个信息：</p>
+<ul>
+<li><code>Looper</code>调用静态方法<code>prepare()</code>来进行初始化，一个线程只能创建一个与之对应的<code>Looper</code>，<code>Looper</code>初始化的时候会创建一个MQ，因此，有了这样的对应关系，一个线程对应一个<code>Looper</code>，一个<code>Looper</code>对应一个MQ。可以说，它们三个是在一条线上的。</li>
+<li><code>Looper</code>调用静态方法<code>loop()</code>开始无限循环的取消息，MQ调用<code>next()</code>方法来获取消息</li>
+</ul>
+<h3 id="MessageQueue"><a href="#MessageQueue" class="headerlink" title="MessageQueue"></a>MessageQueue</h3><blockquote>
+<p><a href="http://www.grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/5.1.1_r1/android/os/MessageQueue.java#MessageQueue" target="_blank" rel="noopener">android.os.MessageQueue from Grepcode</a></p>
+</blockquote>
+<p>对于MQ的源码，简单的看一下，构造函数与<code>next()</code>方法就好了。</p>
+<h4 id="MQ的构造方法"><a href="#MQ的构造方法" class="headerlink" title="MQ的构造方法"></a>MQ的构造方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MessageQueue(<span class="keyword">boolean</span> quitAllowed) &#123;</span><br><span class="line">    mQuitAllowed = quitAllowed;</span><br><span class="line">    mPtr = nativeInit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MQ的构造方法简单的调用了nativeInit()来进行初始化，这是一个jni方法，也就是说，可能是在JNI层维持了它这个消息队列的对象。</p>
+<h4 id="MessageQueue-next"><a href="#MessageQueue-next" class="headerlink" title="MessageQueue.next()"></a><code>MessageQueue.next()</code></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Message <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">long</span> ptr = mPtr;</span><br><span class="line">    <span class="keyword">if</span> (ptr == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> nextPollTimeoutMillis = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nextPollTimeoutMillis != <span class="number">0</span>) &#123;</span><br><span class="line">            Binder.flushPendingCommands();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        nativePollOnce(ptr, nextPollTimeoutMillis);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">            <span class="comment">// Try to retrieve the next message.  Return if found.</span></span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">long</span> now = SystemClock.uptimeMillis();</span><br><span class="line">            Message prevMsg = <span class="keyword">null</span>;</span><br><span class="line">            Message msg = mMessages;</span><br><span class="line">            <span class="keyword">if</span> (msg != <span class="keyword">null</span> &amp;&amp; msg.target == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// Stalled by a barrier.  Find the next asynchronous message in the queue.</span></span><br><span class="line">                <span class="keyword">do</span> &#123;</span><br><span class="line">                    prevMsg = msg;</span><br><span class="line">                    msg = msg.next;</span><br><span class="line">                &#125; <span class="keyword">while</span> (msg != <span class="keyword">null</span> &amp;&amp; !msg.isAsynchronous());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (msg != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (now &lt; msg.when) &#123;</span><br><span class="line">                    <span class="comment">// Next message is not ready.  Set a timeout to wake up when it is ready.</span></span><br><span class="line">                    nextPollTimeoutMillis = (<span class="keyword">int</span>) Math.min(msg.when - now, Integer.MAX_VALUE);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// Got a message.</span></span><br><span class="line">                    mBlocked = <span class="keyword">false</span>;</span><br><span class="line">                    <span class="keyword">if</span> (prevMsg != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        prevMsg.next = msg.next;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        mMessages = msg.next;</span><br><span class="line">                    &#125;</span><br><span class="line">                    msg.next = <span class="keyword">null</span>;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="keyword">false</span>) Log.v(<span class="string">"MessageQueue"</span>, <span class="string">"Returning message: "</span> + msg);</span><br><span class="line">                    <span class="keyword">return</span> msg;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// No more messages.</span></span><br><span class="line">                nextPollTimeoutMillis = -<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>next()</code>方法的代码有些长，我作了一些省略，请注意到，这个方法也有一个死循环，这样做的效果就是，在<code>Looper</code>的死循环中，调用了<code>next()</code>，而<code>next()</code>这里也在死循环，表面上看起来，方法就阻塞在<code>Looper</code>的死循环中的那一行了，知道<code>next()</code>方法能返回一个<code>Message</code>对象出来。</p>
+<p>简单浏览MQ的代码，我们得到了这些信息：</p>
+<ul>
+<li>MQ的初始化是交给JNI去做的</li>
+<li>MQ的<code>next()</code>方法是个死循环，在不停的访问MQ，从中获取消息出来返回给<code>Looper</code>去处理。</li>
+</ul>
+<h3 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h3><blockquote>
+<p><a href="http://www.grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/5.1.1_r1/android/os/Message.java#Message" target="_blank" rel="noopener">android.os.Message from Grepcode</a></p>
+</blockquote>
+<p><code>Message</code>对象是MQ中队列的element，也是<code>Handler</code>发送，接收处理的一个对象。对于它，我们需要了解它的几个成员属性即可。</p>
+<p><code>Message</code>的成员变量可以分为三个部分：</p>
+<ul>
+<li>数据部分：它包括<code>what(int)</code>, <code>arg1(int)</code>, <code>arg2(int)</code>, <code>obj(Object)</code>, <code>data(Bundle)</code>等，一般用这些来传递数据。</li>
+<li>发送者（target）：它有一个成员变量叫<code>target</code>，它的类型是<code>Handler</code>的，这个成员变量很重要，它标记了这个<code>Message</code>对象本身是谁发送的，最终也会交给谁去处理。</li>
+<li>callback：它有一个成员变量叫<code>callback</code>，它的类型是<code>Runnable</code>，可以理解为一个可以被执行的代码片段。</li>
+</ul>
+<h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><blockquote>
+<p><a href="http://www.grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/5.1.1_r1/android/os/Handler.java#Handler" target="_blank" rel="noopener">android.os.Handler from Grepcode</a></p>
+</blockquote>
+<p><code>Handler</code>对象是在API层面供给开发者使用最多的一个类，我们主要通过这个类来进行发送消息与处理消息。</p>
+<h4 id="Handler的构造方法（初始化）"><a href="#Handler的构造方法（初始化）" class="headerlink" title="Handler的构造方法（初始化）"></a>Handler的构造方法（初始化）</h4><p>通常我们调用没有参数的构造方法来进行初始化，使用起来大概是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Handler mHandler = <span class="keyword">new</span> Handler() &#123;</span><br><span class="line">    handleMessage(Message msg) &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有参数的构造方法最终调用了一个两个参数的构造方法，它的部分源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Handler</span><span class="params">(Callback callback, <span class="keyword">boolean</span> async)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">	mLooper = Looper.myLooper();</span><br><span class="line">	<span class="keyword">if</span> (mLooper == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">			<span class="string">"Can't create handler inside thread that has not called Looper.prepare()"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	mQueue = mLooper.mQueue;</span><br><span class="line">	mCallback = callback;</span><br><span class="line">	mAsynchronous = async;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到，它对<code>mLooper</code>成员变量进行了赋值，通过<code>Looper.myLooper()</code>方法获取到当前线程对应的<code>Looper</code>对象。上面已经提到过，如果<code>Looper</code>调用过<code>prepare()</code>方法，那么这个线程对应了一个<code>Looper</code>实例，这个<code>Looper</code>实例也对应了一个MQ，它们三者之间是一一对应的关系。</p>
+<p>然后它通过<code>mLooper</code>对象，获取了一个MQ，存在自己的<code>mQueue</code>成员变量中。</p>
+<p><code>Handler</code>的初始化代码说明了一点，<code>Handler</code>所初始化的地方（所在的线程），就是从将这个线程对应的<code>Looper</code>的引用赋值给<code>Handler</code>，让<code>Handler</code>也持有</p>
+<p>对于主线程来说，我们在主线程的执行流中，new一个<code>Handler</code>对象，Handler对象都是持有主线程的<code>Looper</code>（也就是<code>Main Looper</code>）对象的。</p>
+<p>同样的，如果我们在一个新线程，不调用<code>Looper.prepare()</code>方法去启动一个<code>Looper</code>，直接new一个<code>Handler</code>对象，那么它就会报错。像这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//Looper.prepare(); </span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//因为Looper没有初始化，所以Looper.myLooper()不能获取到一个Looper对象</span></span><br><span class="line">            Handler h = <span class="keyword">new</span> Handler();</span><br><span class="line">            h.sendEmptyMessage(<span class="number">112</span>);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">     &#125;).start();</span><br></pre></td></tr></table></figure>
+
+<p>以上代码运行后会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.RuntimeException: Can&apos;t create handler inside thread that has not called Looper.prepare()</span><br></pre></td></tr></table></figure>
+
+<p><strong>小结</strong>：<code>Handler</code>的初始化会获取到当前线程的<code>Looper</code>对象，并通过<code>Looper</code>拿到对应的MQ对象，如果当前线程的执行流并没有执行过<code>Looper.prepare()</code>，则无法创建Handler对象</p>
+<h4 id="Handler-sendMessage"><a href="#Handler-sendMessage" class="headerlink" title="Handler.sendMessage()"></a><code>Handler.sendMessage()</code></h4><p><code>sendMessage</code>消息有各种各样的形式或重载，最终会调用到这个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">sendMessageAtTime</span><span class="params">(Message msg, <span class="keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">	MessageQueue queue = mQueue;</span><br><span class="line">	<span class="keyword">if</span> (queue == <span class="keyword">null</span>) &#123;</span><br><span class="line">		RuntimeException e = <span class="keyword">new</span> RuntimeException(</span><br><span class="line">				<span class="keyword">this</span> + <span class="string">" sendMessageAtTime() called with no mQueue"</span>);</span><br><span class="line">		Log.w(<span class="string">"Looper"</span>, e.getMessage(), e);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> enqueueMessage(queue, msg, uptimeMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它又调用了<code>enqueueMessage</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">enqueueMessage</span><span class="params">(MessageQueue queue, Message msg, <span class="keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">	msg.target = <span class="keyword">this</span>;</span><br><span class="line">	<span class="keyword">if</span> (mAsynchronous) &#123;</span><br><span class="line">		msg.setAsynchronous(<span class="keyword">true</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> queue.enqueueMessage(msg, uptimeMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到它对<code>Message</code>的<code>target</code>属性进行了赋值，这样这条消息就知道自己是被谁发送的了。然后将消息加入到队列中。</p>
+<h4 id="Handler-dispatchMessage"><a href="#Handler-dispatchMessage" class="headerlink" title="Handler.dispatchMessage()"></a><code>Handler.dispatchMessage()</code></h4><p><code>Message</code>对象进入了MQ后，很快的会被MQ的<code>next()</code>方法获取到，这样<code>Looper</code>的死循环中就能得到一个<code>Message</code>对象，回顾一下，接下来，就调用了<code>Message.target.dispatchMessage()</code>方法对这条消息进行了处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispatchMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (msg.callback != <span class="keyword">null</span>) &#123;</span><br><span class="line">		handleCallback(msg);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (mCallback != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (mCallback.handleMessage(msg)) &#123;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		handleMessage(msg);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handleCallback</span><span class="params">(Message message)</span> </span>&#123;</span><br><span class="line">	message.callback.run();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//这个方法是空实现，让客户端程序员去覆写实现自己的逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>dispatchMessage</code>方法有两个分支，如果<code>callback</code>（<code>Runnable</code>）不是<code>null</code>，则直接执行<code>callback.run()</code>方法，如果<code>callback</code>是<code>null</code>，则将<code>msg</code>作为参数传给<code>handleMessage()</code>方法去处理，这样就是我们常见的处理方法了。</p>
+<h4 id="Message-target与Handler"><a href="#Message-target与Handler" class="headerlink" title="Message.target与Handler"></a><code>Message.target与Handler</code></h4><p>特别需要注意<code>Message</code>中的<code>target</code>成员变量，它是指向自己的发送者，这一点意味着什么呢？</p>
+<p>意味着：一个有<code>Looper</code>的线程可以有很多个<code>Handler</code>，这些<code>Handler</code>都是不同的对象，但是它们都可以将<code>Message</code>对象发送到同一个MQ中，<code>Looper</code>不断的从MQ中获取这些消息，并将消息交给它们的发送者去处理。一个MQ是可以对应多个<code>Handler</code>的（多个<code>Handler</code>都可以往同一个MQ中消息入队）</p>
+<p>下图可以简要的概括下它们之间的关系。</p>
+<p><img src="http://img.blog.csdn.net/20160316115827197" alt="Looper，MessageQueue，Handler，Message"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><code>Looper</code>调用<code>prepare()</code>进行初始化，创建了一个与当前线程对应的<code>Looper</code>对象（通过<code>ThreadLocal</code>实现），并且初始化了一个与当前<code>Looper</code>对应的<code>MessageQueue</code>对象。</li>
+<li><code>Looper</code>调用静态方法<code>loop()</code>开始消息循环，通过<code>MessageQueue.next()</code>方法获取<code>Message</code>对象。</li>
+<li>当获取到一个<code>Message</code>对象时，让<code>Message</code>的发送者（<code>target</code>）去处理它。</li>
+<li><code>Message</code>对象包括数据，发送者（<code>Handler</code>），可执行代码段（<code>Runnable</code>）三个部分组成。</li>
+<li><code>Handler</code>可以在一个已经<code>Looper.prepare()</code>的线程中初始化，如果线程没有初始化<code>Looper</code>，创建<code>Handler</code>对象会失败</li>
+<li>一个线程的执行流中可以构造多个<code>Handler</code>对象，它们都往同一个MQ中发消息，消息也只会分发给对应的<code>Handler</code>处理。</li>
+<li><code>Handler</code>将消息发送到MQ中，<code>Message</code>的<code>target</code>域会引用自己的发送者，<code>Looper</code>从MQ中取出来后，再交给发送这个<code>Message</code>的<code>Handler</code>去处理。</li>
+<li><code>Message</code>可以直接添加一个<code>Runnable</code>对象，当这条消息被处理的时候，直接执行<code>Runnable.run()</code>方法。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/计算机中的数与数据/" rel="next" title="计算机中的数与数据">
+                <i class="fa fa-chevron-left"></i> 计算机中的数与数据
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/反编译apk的步骤/" rel="prev" title="反编译apk的步骤">
+                反编译apk的步骤 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kross</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/krossford" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="kross:krossford@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-中的线程间通信方案"><span class="nav-number">1.</span> <span class="nav-text">Android 中的线程间通信方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Looper"><span class="nav-number">1.1.</span> <span class="nav-text">Looper</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-prepare"><span class="nav-number">1.1.1.</span> <span class="nav-text">Looper.prepare()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-的构造方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">Looper 的构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-loop"><span class="nav-number">1.1.3.</span> <span class="nav-text">Looper.loop()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MessageQueue"><span class="nav-number">1.2.</span> <span class="nav-text">MessageQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MQ的构造方法"><span class="nav-number">1.2.1.</span> <span class="nav-text">MQ的构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MessageQueue-next"><span class="nav-number">1.2.2.</span> <span class="nav-text">MessageQueue.next()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message"><span class="nav-number">1.3.</span> <span class="nav-text">Message</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler"><span class="nav-number">1.4.</span> <span class="nav-text">Handler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler的构造方法（初始化）"><span class="nav-number">1.4.1.</span> <span class="nav-text">Handler的构造方法（初始化）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler-sendMessage"><span class="nav-number">1.4.2.</span> <span class="nav-text">Handler.sendMessage()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler-dispatchMessage"><span class="nav-number">1.4.3.</span> <span class="nav-text">Handler.dispatchMessage()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Message-target与Handler"><span class="nav-number">1.4.4.</span> <span class="nav-text">Message.target与Handler</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kross</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">32.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

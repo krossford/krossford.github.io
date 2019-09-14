@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="数学,图形,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言贝塞尔曲线（Bezier Curve）是一种与n个点相关的平滑曲线，其中贝塞尔曲线会经过第一个点和最后一个点。在Adobe Photoshop中，可以使用钢笔工具来创建贝塞尔曲线。上个动图来表现下：个人觉得这个玩意挺有意思，就自己在Android上实现了一下，我实现的效果如下图所示： 原理原理什么的，我认为这张图足以诠释一切。图片来自wiki百科。找到动图中所显示的规律，你就知道贝塞尔曲线怎么">
+<meta name="keywords" content="数学,图形">
+<meta property="og:type" content="article">
+<meta property="og:title" content="贝塞尔曲线的实现">
+<meta property="og:url" content="http://yoursite.com/2015/10/28/贝塞尔曲线的实现/index.html">
+<meta property="og:site_name" content="kross">
+<meta property="og:description" content="前言贝塞尔曲线（Bezier Curve）是一种与n个点相关的平滑曲线，其中贝塞尔曲线会经过第一个点和最后一个点。在Adobe Photoshop中，可以使用钢笔工具来创建贝塞尔曲线。上个动图来表现下：个人觉得这个玩意挺有意思，就自己在Android上实现了一下，我实现的效果如下图所示： 原理原理什么的，我认为这张图足以诠释一切。图片来自wiki百科。找到动图中所显示的规律，你就知道贝塞尔曲线怎么">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQzNzQ4NTI1?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQ0MDQ3MDUw?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQ1MDQ4NzAy?x-oss-process=image/format,png">
+<meta property="og:updated_time" content="2019-09-14T10:14:15.938Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="贝塞尔曲线的实现">
+<meta name="twitter:description" content="前言贝塞尔曲线（Bezier Curve）是一种与n个点相关的平滑曲线，其中贝塞尔曲线会经过第一个点和最后一个点。在Adobe Photoshop中，可以使用钢笔工具来创建贝塞尔曲线。上个动图来表现下：个人觉得这个玩意挺有意思，就自己在Android上实现了一下，我实现的效果如下图所示： 原理原理什么的，我认为这张图足以诠释一切。图片来自wiki百科。找到动图中所显示的规律，你就知道贝塞尔曲线怎么">
+<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQzNzQ4NTI1?x-oss-process=image/format,png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2015/10/28/贝塞尔曲线的实现/">
+
+
+
+
+
+  <title>贝塞尔曲线的实现 | kross</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kross</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">一个有趣的程序员</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/10/28/贝塞尔曲线的实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kross">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kross">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">贝塞尔曲线的实现</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-28T18:12:21+08:00">
+                2015-10-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>贝塞尔曲线（Bezier Curve）是一种与n个点相关的平滑曲线，其中贝塞尔曲线会经过第一个点和最后一个点。在Adobe Photoshop中，可以使用钢笔工具来创建贝塞尔曲线。上个动图来表现下：<br><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQzNzQ4NTI1?x-oss-process=image/format,png" alt="Bezier Curve On Photoshop"><br>个人觉得这个玩意挺有意思，就自己在Android上实现了一下，我实现的效果如下图所示：<br><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQ0MDQ3MDUw?x-oss-process=image/format,png" alt="这里写图片描述"></p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>原理什么的，我认为这张图足以诠释一切。图片来自wiki百科。<br><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTUxMDI3MTQ1MDQ4NzAy?x-oss-process=image/format,png" alt="这里写图片描述"><br>找到动图中所显示的规律，你就知道贝塞尔曲线怎么回事了。</p>
+<p>你会发现，我们给定了n个点，n个点之间有n-1条线段，我们在这n-1条线段上各取一个点，那么就有n-2个点，然后依次类推，直到只剩下一条线段，一个点，然后我们移动这些点，因此线段也会移动，线段上的点也跟着会变动，移动的规则是，每个点所在的位置在线段上所占的百分比都是相同的。</p>
+<p>比如上图中，$P_0$和$P_1$所构成的线段上的点，处于开始阶段，那么就是在$P_0$的位置，和$P_0$重合，其他的点也都处于开始位置，处于所在线段的开头。</p>
+<p>然后逐渐以百分比的形式移动。</p>
+<p>最终递归到最后一条线段，最后的那个所形成的轨迹，就是贝塞尔曲线了。不明白的，好好观察上面的动图吧。</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>理解了原理后，我们就开始构思如何实现它，显然得到的是一堆点，并且，这些点是有顺序的，因为贝塞尔曲线会经过第一个点和最后一个点，而中间的点都只是影响到曲线的路径，并不一定会经过。</p>
+<p>接下来要考虑到，生成曲线的过程是动态的，我们没法直观的得到，进度为t的时候，最终的那个点的位置在什么地方。t每一次改变，所有的点所有的线都会改变，因此我们需要动态的计算。也就是说，我们需要一个循环，从t=0，一直计算到t=100，每次递增1，这样我们就会计算100次，得到100个点。</p>
+<p>再来考虑如何计算。假设有5个点，当前进度为t，那么我们可以计算得到4个点的坐标，同样的，通过4个点的坐标，和进度t，我们可以得到3个点的坐标，以此类推，值得得到一个点的坐标时，这个坐标就是贝塞尔曲线上的一个点。</p>
+<p>因此，使用递归来做这个计算，在逻辑上是清晰的。</p>
+<p>整理一下思路</p>
+<ol>
+<li>输入一个点的序列，点的数量是&gt;=2的。</li>
+<li>当前进度为0，最大进度100，递增1。</li>
+<li>传入所有点的序列和当前进度，递归得到贝塞尔曲线的点。</li>
+<li>将点的坐标存起来，进度递增，执行3。</li>
+<li>进度结束，得到了100个在贝塞尔曲线上的点。</li>
+</ol>
+<p>Bezier Curve的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * How to use it</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * BezierCurve bc = new BezierCurve();</span></span><br><span class="line"><span class="comment"> * bc.setPointSequence(PointFp[)</span></span><br><span class="line"><span class="comment"> *   .progressWith(1)   //optional</span></span><br><span class="line"><span class="comment"> *   .build();</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * after above code run end, you will get a List of BezierCurve Point.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Created by krosshuang on 2015/10/21.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BezierCurve</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String LOG_TAG = <span class="string">"BezierCurve"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;PointF&gt; mCurvePoints = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">private</span> PointF[] mPointSequence = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_DIVIDED = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> mProgressIncrement = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> incrementY;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> incrementX;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BezierCurve <span class="title">setPointSequence</span><span class="params">(PointF[] pointSequence)</span> </span>&#123;</span><br><span class="line">        mPointSequence = pointSequence;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Progress increment that means how many times calculate for creating the Bezier Curve.</span></span><br><span class="line"><span class="comment">     * The value is 1.0 as default. So, progress is 0.0 on initial, and become 1.0, 2.0, 3.0, ..., 100.0, then over.</span></span><br><span class="line"><span class="comment">     * Every time, we will only create one Bezier Curve Point. so there are 100 points as default.</span></span><br><span class="line"><span class="comment">     * If you want to let your curve be more smooth, set progressIncrement to less value.</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BezierCurve <span class="title">progressWith</span><span class="params">(<span class="keyword">float</span> progressIncrement)</span> </span>&#123;</span><br><span class="line">        mProgressIncrement = progressIncrement;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;PointF&gt; <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mPointSequence.length &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">//only one point, no curve.</span></span><br><span class="line">            Log.e(LOG_TAG, <span class="string">"only one point, could not create bezier curve. please check the parameter of function setPointSequence()."</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mCurvePoints == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mCurvePoints = <span class="keyword">new</span> ArrayList&lt;PointF&gt;();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mCurvePoints.clear();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">float</span> i = <span class="number">0</span>; i &lt;= MAX_DIVIDED; i += mProgressIncrement) &#123;</span><br><span class="line">            calculate(i, mPointSequence);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> mCurvePoints;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">calculate</span><span class="params">(<span class="keyword">float</span> progress, PointF[] pointList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pointList.length == <span class="number">2</span>) &#123;</span><br><span class="line">            mCurvePoints.add(getPoint(progress, pointList[<span class="number">0</span>], pointList[<span class="number">1</span>]));</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pointList.length &gt; <span class="number">2</span>) &#123;</span><br><span class="line">            PointF[] tempList = <span class="keyword">new</span> PointF[pointList.length - <span class="number">1</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; pointList.length - <span class="number">1</span>; i++) &#123;</span><br><span class="line">                tempList[i] = getPoint(progress, pointList[i], pointList[i + <span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            calculate(progress, tempList);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//only one point, bad parameters.</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> PointF <span class="title">getPoint</span><span class="params">(<span class="keyword">float</span> processPercent, PointF startPoint, PointF endPoint)</span> </span>&#123;</span><br><span class="line">        incrementY = (endPoint.y - startPoint.y) / MAX_DIVIDED;</span><br><span class="line">        incrementX = (endPoint.x - startPoint.x) / MAX_DIVIDED;</span><br><span class="line"></span><br><span class="line">        PointF p = <span class="keyword">new</span> PointF();</span><br><span class="line">        p.x = startPoint.x + processPercent * incrementX;</span><br><span class="line">        p.y = startPoint.y + processPercent * incrementY;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="四个点足矣"><a href="#四个点足矣" class="headerlink" title="四个点足矣"></a>四个点足矣</h2><p>观察贝塞尔曲线在Photoshop上的表现，你会发现，PS只使用了4个点来形成一条贝塞尔曲线，理论上，贝塞尔曲线可以使用无数个点形成的。<br>[外链图片转存失败(img-tlPuLCwQ-1568455920285)(<a href="http://img.blog.csdn.net/20151027152503777)]" target="_blank" rel="noopener">http://img.blog.csdn.net/20151027152503777)]</a><br>上图使用了很多点来形成贝塞尔曲线，但是你看，上下交错的点对曲线的影响实际上抵消了，因此更多的控制点意义就不是很大了，而且还增加了计算量。</p>
+<p>所以PS的钢笔工具之所以是这样的形式，也是经过了他们的工程师的思考所得到的最佳方案。</p>
+<h1 id="Android上实现钢笔工具"><a href="#Android上实现钢笔工具" class="headerlink" title="Android上实现钢笔工具"></a>Android上实现钢笔工具</h1><p>计算贝塞尔曲线的点并不复杂，然而在Android上实现钢笔工具还是需要费点时间。</p>
+<h2 id="操作定义"><a href="#操作定义" class="headerlink" title="操作定义"></a>操作定义</h2><p>我先对触屏的操作进行了定义。</p>
+<ol>
+<li>double click 创建一个孤立的点，没有控制柄，贝塞尔曲线会经过。</li>
+<li>double touch then drag 创建一个有控制柄的点，贝塞尔曲线会经过。</li>
+</ol>
+<p>在android中的touch事件分别是：</p>
+<ol>
+<li>down up down up</li>
+<li>down up down move …move up</li>
+</ol>
+<p>在创建有控制柄的点时，拖拽过程会形成控制柄，控制柄的行为是：</p>
+<ol>
+<li>创建时，两个控制柄是中心对称的，在一条直线上，并且距离相等。</li>
+<li>创建后，两个控制柄在方向上是中心对称的，也就是在一条直线上，但是距离并不相等。</li>
+</ol>
+<h2 id="控制点的定义与操作"><a href="#控制点的定义与操作" class="headerlink" title="控制点的定义与操作"></a>控制点的定义与操作</h2><p>我们需要定义一下控制点的数据结构以及它所具有的操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BezierControlPoint</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> PointF prevPoint = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> PointF nextPoint = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> PointF vertex = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> isSingle = <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>prevPoint和nextPoint表示控制柄上的两个点，曲线是不经过的，而vertex是曲线经过的点，三个点在一条直线上，prevPoint和nextPoint其中一个变化，另一个也会跟着变化。如果移动vertex，三个点同步移动。</p>
+<p>接下来我们补充方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BezierControlPoint</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> PointF prevPoint = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> PointF nextPoint = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> PointF vertex = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> isSingle = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BezierControlPoint <span class="title">createSingle</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BezierControlPoint <span class="title">createMulti</span><span class="params">(<span class="keyword">float</span> vertexX, <span class="keyword">float</span> vertexY, <span class="keyword">float</span> nextX, <span class="keyword">float</span> nextY)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveVertex</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveNext</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">boolean</span> isMirror)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">movePrev</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">boolean</span> isMirror)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中movePrev和moveNext的isMirror，表示是否镜像变化，如果isMirror -&gt; true，那么除了角度的联动之外，距离也会保持相等，也就是关于vertex的中心对称。</p>
+<h2 id="prevPoint和nextPoint的联动变化"><a href="#prevPoint和nextPoint的联动变化" class="headerlink" title="prevPoint和nextPoint的联动变化"></a>prevPoint和nextPoint的联动变化</h2><p>prevPoint和nextPoint会关于vertex进行联动变化，这个要怎么处理呢？假如我们在屏幕坐标系下处理的话，真的不好处理，因为旋转的角度不好处理，于是，我们需要把屏幕笛卡尔坐标系转换成极坐标系，然后再处理就简单多了。</p>
+<p>转换后的坐标，有两个值，angle和r，angle是角度，r是相对于中心点的距离。</p>
+<p>因此我们需要先把prevPoint和nextPoint计算出相当于vertex的坐标，也就是把vertex当成(0, 0)。<br>然后转换成极坐标系，touch的点计算出角度，用$\pi - angle$就能得到另一个点的角度。<br>最后再转换成笛卡尔坐标上的点，再相对于vertex计算回去即可。</p>
+<p>贴上所有代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BezierControlPoint</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String LOG_TAG = <span class="string">"BezierControlPoint"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_PREV = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_VERTEX = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_NEXT = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> PointF prevPoint = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> PointF nextPoint = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> PointF vertex = <span class="keyword">new</span> PointF();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> isSingle = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BezierControlPoint <span class="title">createSingle</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">        BezierControlPoint p = <span class="keyword">new</span> BezierControlPoint();</span><br><span class="line">        p.isSingle = <span class="keyword">true</span>;</span><br><span class="line">        p.vertex.x = x;</span><br><span class="line">        p.vertex.y = y;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * create multi control point</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BezierControlPoint <span class="title">createMulti</span><span class="params">(<span class="keyword">float</span> vertexX, <span class="keyword">float</span> vertexY, <span class="keyword">float</span> nextX, <span class="keyword">float</span> nextY)</span> </span>&#123;</span><br><span class="line">        BezierControlPoint p = <span class="keyword">new</span> BezierControlPoint();</span><br><span class="line">        p.isSingle = <span class="keyword">false</span>;</span><br><span class="line">        p.vertex.x = vertexX;</span><br><span class="line">        p.vertex.y = vertexY;</span><br><span class="line">        p.nextPoint.x = nextX;</span><br><span class="line">        p.nextPoint.y = nextY;</span><br><span class="line">        p.prevPoint.x = <span class="number">2</span> * p.vertex.x - p.nextPoint.x;</span><br><span class="line">        p.prevPoint.y = <span class="number">2</span> * p.vertex.y - p.nextPoint.y;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * move vertex</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveVertex</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">        Log.i(LOG_TAG, <span class="string">"moveVertex"</span>);</span><br><span class="line">        <span class="keyword">float</span> deltaX = x - vertex.x;</span><br><span class="line">        <span class="keyword">float</span> deltaY = y - vertex.y;</span><br><span class="line">        vertex.x = x;</span><br><span class="line">        vertex.y = y;</span><br><span class="line">        prevPoint.x += deltaX;</span><br><span class="line">        prevPoint.y += deltaY;</span><br><span class="line">        nextPoint.x += deltaX;</span><br><span class="line">        nextPoint.y += deltaY;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveNext</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">boolean</span> isMirror)</span> </span>&#123;</span><br><span class="line">        Log.i(LOG_TAG, <span class="string">"moveNext x: "</span> + x + <span class="string">" y: "</span> + y + <span class="string">" isMirror: "</span> + isMirror);</span><br><span class="line">        <span class="keyword">if</span> (isMirror) &#123;</span><br><span class="line">            <span class="keyword">float</span> deltaX = x - vertex.x;</span><br><span class="line">            <span class="keyword">float</span> deltaY = y - vertex.y;</span><br><span class="line">            prevPoint.x = vertex.x - deltaX;</span><br><span class="line">            prevPoint.y = vertex.y - deltaY;</span><br><span class="line">            nextPoint.x = x;</span><br><span class="line">            nextPoint.y = y;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">float</span> nextEndX = x - vertex.x;</span><br><span class="line">            <span class="keyword">float</span> nextEndY = y - vertex.y;</span><br><span class="line">            <span class="keyword">float</span> relativePrevX = prevPoint.x - vertex.x;</span><br><span class="line">            <span class="keyword">float</span> relativePrevY = prevPoint.y - vertex.y;</span><br><span class="line"></span><br><span class="line">            PolarPointF polarPrev = PolarPointF.parseFromCartesianCoordinatePoint(relativePrevX, relativePrevY);</span><br><span class="line">            PolarPointF polarNextEnd = PolarPointF.parseFromCartesianCoordinatePoint(nextEndX, nextEndY);</span><br><span class="line"></span><br><span class="line">            polarPrev.angle =  - (<span class="keyword">float</span>)Math.PI + polarNextEnd.angle;</span><br><span class="line"></span><br><span class="line">            prevPoint = polarPrev.toCartesianCoordinatePoint();</span><br><span class="line">            prevPoint.x = prevPoint.x + vertex.x;</span><br><span class="line">            prevPoint.y = prevPoint.y + vertex.y;</span><br><span class="line">            nextPoint.x = x;</span><br><span class="line">            nextPoint.y = y;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//Log.i(LOG_TAG, "prev: " + prevPoint.toString() + " vertex: " + vertex.toString() + " next: " + nextPoint.toString());</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">movePrev</span><span class="params">(<span class="keyword">float</span> x, <span class="keyword">float</span> y, <span class="keyword">boolean</span> isMirror)</span> </span>&#123;</span><br><span class="line">        Log.i(LOG_TAG, <span class="string">"movePrev"</span>);</span><br><span class="line">        <span class="keyword">if</span> (isMirror) &#123;</span><br><span class="line">            <span class="keyword">float</span> deltaX = x - vertex.x;</span><br><span class="line">            <span class="keyword">float</span> deltaY = y - vertex.y;</span><br><span class="line">            prevPoint.x = vertex.x - deltaX;</span><br><span class="line">            prevPoint.y = vertex.y - deltaY;</span><br><span class="line">            nextPoint.x = x;</span><br><span class="line">            nextPoint.y = y;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">float</span> prevEndX = x - vertex.x;</span><br><span class="line">            <span class="keyword">float</span> prevEndY = y - vertex.y;</span><br><span class="line">            <span class="keyword">float</span> relativeNextX = nextPoint.x - vertex.x;</span><br><span class="line">            <span class="keyword">float</span> relativeNextY = nextPoint.y - vertex.y;</span><br><span class="line"></span><br><span class="line">            PolarPointF polarNext = PolarPointF.parseFromCartesianCoordinatePoint(relativeNextX, relativeNextY);</span><br><span class="line">            PolarPointF polarPrevEnd = PolarPointF.parseFromCartesianCoordinatePoint(prevEndX, prevEndY);</span><br><span class="line"></span><br><span class="line">            polarNext.angle =  - (<span class="keyword">float</span>)Math.PI + polarPrevEnd.angle;</span><br><span class="line"></span><br><span class="line">            nextPoint = polarNext.toCartesianCoordinatePoint();</span><br><span class="line">            nextPoint.x = nextPoint.x + vertex.x;</span><br><span class="line">            nextPoint.y = nextPoint.y + vertex.y;</span><br><span class="line">            prevPoint.x = x;</span><br><span class="line">            prevPoint.y = y;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上就实现了在android上的钢笔工具的功能。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数学/" rel="tag"># 数学</a>
+          
+            <a href="/tags/图形/" rel="tag"># 图形</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/08/30/进制及其转换/" rel="next" title="进制及其转换">
+                <i class="fa fa-chevron-left"></i> 进制及其转换
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/计算机中的数与数据/" rel="prev" title="计算机中的数与数据">
+                计算机中的数与数据 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kross</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/krossford" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="kross:krossford@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">3.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#四个点足矣"><span class="nav-number">3.1.</span> <span class="nav-text">四个点足矣</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android上实现钢笔工具"><span class="nav-number">4.</span> <span class="nav-text">Android上实现钢笔工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#操作定义"><span class="nav-number">4.1.</span> <span class="nav-text">操作定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#控制点的定义与操作"><span class="nav-number">4.2.</span> <span class="nav-text">控制点的定义与操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prevPoint和nextPoint的联动变化"><span class="nav-number">4.3.</span> <span class="nav-text">prevPoint和nextPoint的联动变化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kross</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">32.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

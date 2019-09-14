@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="计算机科学,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="位与二进制在现实生活中，我们会用纸和笔来记录数据，比如在之前智能手机还没有普及的年代，还有相当一部分人使用小本本来记录电话号码，显然电话号码作为一种数据，记录在纸上。 那么在计算机中是如何记录数据，表达信息的呢？ 计算机使用一个序列的位（bit）来记录数据。 一个位中存储着一个二进制数字，什么是二进制呢？二进制简单来说就是逢二进位的一种进制，人类最常用，最直观的一直使用着十进制，可用的符号为：0，">
+<meta name="keywords" content="计算机科学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机中的数与数据">
+<meta property="og:url" content="http://yoursite.com/2016/02/17/计算机中的数与数据/index.html">
+<meta property="og:site_name" content="kross">
+<meta property="og:description" content="位与二进制在现实生活中，我们会用纸和笔来记录数据，比如在之前智能手机还没有普及的年代，还有相当一部分人使用小本本来记录电话号码，显然电话号码作为一种数据，记录在纸上。 那么在计算机中是如何记录数据，表达信息的呢？ 计算机使用一个序列的位（bit）来记录数据。 一个位中存储着一个二进制数字，什么是二进制呢？二进制简单来说就是逢二进位的一种进制，人类最常用，最直观的一直使用着十进制，可用的符号为：0，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTYwMjIxMTg1OTEwNzkx?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTYwMjI1MjAxMDEyNzY0?x-oss-process=image/format,png">
+<meta property="og:updated_time" content="2019-09-14T10:17:05.529Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机中的数与数据">
+<meta name="twitter:description" content="位与二进制在现实生活中，我们会用纸和笔来记录数据，比如在之前智能手机还没有普及的年代，还有相当一部分人使用小本本来记录电话号码，显然电话号码作为一种数据，记录在纸上。 那么在计算机中是如何记录数据，表达信息的呢？ 计算机使用一个序列的位（bit）来记录数据。 一个位中存储着一个二进制数字，什么是二进制呢？二进制简单来说就是逢二进位的一种进制，人类最常用，最直观的一直使用着十进制，可用的符号为：0，">
+<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTYwMjIxMTg1OTEwNzkx?x-oss-process=image/format,png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/02/17/计算机中的数与数据/">
+
+
+
+
+
+  <title>计算机中的数与数据 | kross</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kross</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">一个有趣的程序员</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/02/17/计算机中的数与数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kross">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kross">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">计算机中的数与数据</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-02-17T18:15:27+08:00">
+                2016-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="位与二进制"><a href="#位与二进制" class="headerlink" title="位与二进制"></a>位与二进制</h1><p>在现实生活中，我们会用纸和笔来记录数据，比如在之前智能手机还没有普及的年代，还有相当一部分人使用小本本来记录电话号码，显然电话号码作为一种数据，记录在纸上。</p>
+<p>那么在计算机中是如何记录数据，表达信息的呢？</p>
+<p>计算机使用一个序列的<strong>位（bit）</strong>来记录数据。</p>
+<p>一个位中存储着一个二进制数字，什么是二进制呢？二进制简单来说就是逢二进位的一种进制，人类最常用，最直观的一直使用着十进制，可用的符号为：0，1，2，3，4，5，6，7，8，9，总共有10个符号，二进制则只需要两个符号0和1。对机器来说，使用二进制是非常方便的一种形式，因为二进制只需要两种符号，也就是说，机器只需要能够维持两种不同的状态来对应这两种符号即可，比如高电压和低电压，通电和断电等等。所以，对计算机来说，使用二进制（维持两个状态）是非常有效的方式。</p>
+<p>计算机使用一连串的位来记录数据，比如1位，那么这个位上只能表示0或1，通常1位的数据几乎没有什么作用。<strong>在现在的计算机中，使用8个位来作为一个基本的单位，称为字节（byte）</strong>，那么它写出来应该是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//8个位都是0，对应十进制数字0，中间空开一个空格，四位四位的写在一起是为了可读性</span><br><span class="line">0000 0000	</span><br><span class="line"></span><br><span class="line">//右侧的一般称为最低位，左侧的称为最高位，最低位加1，对应十进制中的1</span><br><span class="line">0000 0001	</span><br><span class="line"></span><br><span class="line">//最低位继续加1，1+1=2，因为是二进制，必须进位了，对应十进制数字2</span><br><span class="line">0000 0010</span><br><span class="line">0000 0011</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">//8位二进制最大值，对应十进制2^8-1=255</span><br><span class="line">1111 1111</span><br></pre></td></tr></table></figure>
+
+<p>以上就是一串从0开始递增的二进制序列。</p>
+<h1 id="十六进制"><a href="#十六进制" class="headerlink" title="十六进制"></a>十六进制</h1><p>刚刚说完了二进制数，现在简单介绍一下十六进制数，二进制数与十六进制数之间有<strong>非常巧妙的关系</strong>。</p>
+<p>十进制需要10个符号：0, 1, 2, 3, 4, 5, 6, 7, 8, 9<br>二进制需要2个符号：0, 1<br>十六进制需要16个符号：0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e, f<br>其中，a-f分别对应着十进制中的10, 11, 12, 13, 14, 15</p>
+<p><strong>十六进制数值中的英文字母是不区分大小写的</strong>。</p>
+<p>现在，让我们来考虑4位二进制数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0000(2) -&gt; 0(10) -&gt; 0(16)	//括号中表示进制</span><br></pre></td></tr></table></figure>
+
+<p>一个4位的二进制数最小为<code>0000</code>，也就是十进制中的<code>0</code>，也是十六进制的<code>0</code>。那么4位二进制最大的值为<code>1111</code>，那么它的值为$1 \times 2^3 + 1 \times 2^2 + 1 \times 2^1 + 1 \times 1^0 = 15$，也就是说，四位二进制能表示数的范围区间为$[0, 15]$，这刚好是1位16进制数所能表示的数值范围。</p>
+<p><strong>四位二进制数能搞好使用一位十六进制数来表示</strong>。</p>
+<p>于是，当计算机中的数值使用二进制表示时，通常会出现成片成片的010101……，这看起来非常头疼，非常容易让人看错，但是，我们可以从低位开始，四个四个的表示为十六进制数。如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0000 0000(2) -&gt; 00(16)</span><br><span class="line">0000 1111(2) -&gt; 0x0f	//通常，&quot;0x&quot;前缀用来指明是一个十六进制数</span><br><span class="line">1111 0001(2) -&gt; 0xF1 //十六进制的字母是不区分大小写的，注意这里大写的F</span><br><span class="line"> 100 1111(2) -&gt; 0x4f //注意！这里的二进制数只有7位，通常我们从最低位开始转换成十六进制数，高位在没有指明的情况下，使用0补齐</span><br><span class="line">0100 1111(2) -&gt; 0x4f //上一行的二进制数高位补齐0的情况</span><br></pre></td></tr></table></figure>
+
+<p>有了十六进制，我们就可以方便简洁的表示非常多位的二进制数，有了更高的可读性。</p>
+<h1 id="整数"><a href="#整数" class="headerlink" title="整数"></a>整数</h1><p>整数又分为有符号与无符号的区别，无符号整数即是<strong>大于等于0的整数</strong>。</p>
+<h2 id="无符号整数的表示"><a href="#无符号整数的表示" class="headerlink" title="无符号整数的表示"></a>无符号整数的表示</h2><p>无符号整数的表示是基于最原始的二进制表示数据的办法，也就是说，给定n位二进制序列，它所能表示的数值范围是$[0, 2^n - 1]$。</p>
+<p>$2^n-1$是怎么来的呢，其实很简单，比如我们给出一个字节（8位）来表示一个整数，<code>0000 0000</code>，它能表示的最小值应该是0了，也就是8位全是0，那么最大值呢？当然是8位全是1了，也就是<code>1111 1111</code>，现在不妨给它加个1，那么它会变成9位的二进制数值<code>1 0000 000</code>，此时，这个9位的二进制数的值为$2^8 = 256$，那么8位最大值当然就是$2^8-1=255$了。</p>
+<p>所以，无符号整数在计算机中的表示，就是简单的对位序列的数值理解即可。</p>
+<h2 id="有符号整数的表示"><a href="#有符号整数的表示" class="headerlink" title="有符号整数的表示"></a>有符号整数的表示</h2><p>通过位序列来表示有符号整数是非常巧妙的，称之为<strong>补码编码</strong>的方式来表示有符号整数。所谓使用补码来表示有符号数，实际上对二进制序列并没有什么特别大的处理，它仍然是010101……这样的一串东西，只是我们用一套称为“补码”的规则来理解这串位序列而已。</p>
+<p>补码就是将位序列的最高位解释为负权。</p>
+<p>比如，给定位序列，一个字节<code>1000 0001</code>，如果它是表示无符号整数，它的值是多少呢？很简单$1 \times 2^7 + 1 = 129$，那么如果我们用补码来理解它呢？最高位是负权，也就是$-1 \times 2^7 + 1 = -127$。</p>
+<p>补码会将最高位理解为一个负数，直观点来看，就是当最高位是1的时候，是一个非常大的负数加上后面的正整数，后面的正整数越大，这个负数越小，越靠近0，当最高位是0的时候，那么负权整个都是0，剩下的几位如同无符号整数一样表示正整数。</p>
+<p>我们用一串递增的序列来理解。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0000 0000 -&gt; -0 + 0 = 0</span><br><span class="line">0000 0001 -&gt; -0 + 1 = 1</span><br><span class="line">...</span><br><span class="line">0111 1110 -&gt; -0 + 126 = 126</span><br><span class="line">0111 1111 -&gt; -0 + 127 = 127</span><br><span class="line">1000 0000 -&gt; -128 + 0 = -128</span><br><span class="line">1000 0001 -&gt; -128 + 1 = -127</span><br><span class="line">1000 0010 -&gt; -128 + 2 = -126</span><br><span class="line">...</span><br><span class="line">1111 1110 -&gt; -128 + 126 = -2</span><br><span class="line">1111 1111 -&gt; -128 + 127 = -1</span><br></pre></td></tr></table></figure>
+
+<p>通过上述递增的序列，你会发现，8位二进制能表示的有符号整数的范围是$[-128, 127]$，我们可以用数学的语言来描述<strong>一个n位的二进制能表示的有符号整数范围是$[-2^{n-1},2^{n-1}-1]$</strong>。</p>
+<h2 id="有符号数与无符号数的相互转换"><a href="#有符号数与无符号数的相互转换" class="headerlink" title="有符号数与无符号数的相互转换"></a>有符号数与无符号数的相互转换</h2><p>通常在高级程序语言中，有无符号整数的相互转换是不改变位序列的，只是换了一种“解析”方式去解释位序列，比如说<code>1000 0000</code>是一个无符号数，那么它的值是<code>128</code>，如果我们把它转换成一个有符号数，位序列不变，只是用补码的方式去理解它，那么它的数值就变成了<code>-128</code>了。</p>
+<p>我来用一张图片说明得更清楚一些。<br><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTYwMjIxMTg1OTEwNzkx?x-oss-process=image/format,png" alt="这里写图片描述"><br>如上图所示，在数据大小为8位的情况下，它的低7位所表示的数值范围$[0,127]$之间都是可以做到安全的转换，但是当最高位不为0的时候，有符号数与无符号数的相互转换就会变成不安全的。</p>
+<p>在我们写代码的时候一定要注意这一点。</p>
+<h2 id="扩展一个数值的位"><a href="#扩展一个数值的位" class="headerlink" title="扩展一个数值的位"></a>扩展一个数值的位</h2><p>如果我们要将一个8位的数据放到16位的容器中去，那么我们需要对数据进行扩展， 也就是我们需要确定新的高8位应该是放0还是放1。</p>
+<p>这个问题很简单，对于无符号数的扩展，只要简单的在高位上补充满0即可，这种方式称为<strong>零扩展</strong>。对于有符号数，只需要在高位补充满1即可，这种方式称为<strong>符号扩展</strong>。</p>
+<h2 id="整数的加法计算"><a href="#整数的加法计算" class="headerlink" title="整数的加法计算"></a>整数的加法计算</h2><p>整数的计算分为，无符号整数加法，有符号整数加法，无符号与有符号整数混合的加法。</p>
+<p>对于无符号整数的计算，只是单单从位级上考虑就行了，但是当两个二进制数相加后，最高位向前进1了，那么就会产生溢出，本来应该变成一个更大的数，结果却变小了。</p>
+<p>对于有符号数的计算，同样的也是从位级上进行加法计算，一样的，最高位如果向前进一了，一样会产生溢出。比如对于8位的数据，<code>-128 - 128 -&gt; 0</code>，我们在位级上进行考虑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//这是一个竖式</span><br><span class="line">1000 0000</span><br><span class="line">1000 0000</span><br><span class="line">----------</span><br><span class="line">0000 0000</span><br></pre></td></tr></table></figure>
+
+<p>对于有符号数与无符号数混合的表达式，一般需要查看编译器是如何处理这个问题的，有可能是将有符号数转成无符号数再进行计算，也有可能是将无符号数转成有符号数再进行计算。这个问题跟整型与浮点数相加是类似的问题，还是看编译器/虚拟机是具体如何解决这个问题的。</p>
+<p>#浮点数<br>前面所说的有符号整数与无符号整数，都属于定点数，就是小数点固定的数，而浮点数，即小数点是可以浮动（变化）的数。自从我听到浮点数这个概念，在一个很长的时间里，我都以为浮点数就是指小数，其实不是这样的，浮点数并不是狭隘的说一定要表示为小数（如123.45），应该更准确的理解为小数点的位置不是固定的，也就是说，这种数的“表示/解析”方法是可以表示小数点在不同位置的数的。</p>
+<h2 id="二进制小数"><a href="#二进制小数" class="headerlink" title="二进制小数"></a>二进制小数</h2><p>在解释浮点数之前，我们先要知道一下二进制的小数是什么情况。<br>先看一个二进制整数的例子，如<code>101</code>，那么它的十进制数值为$1 \times 2^2 + 1 \times 2^0 = 5$，那么，当二进制数值有小数点时，<code>101.101</code>，它的十进制数值为<br>$$1 \times 2^2 + 1 \times 2^0 + 1 \times 2^{-1} + 1 \times 2^{-3}= 4 + 1 + \frac{1}{2} + \frac{1}{8} = 5\frac{5}{8}$$</p>
+<p>可以发现，0.1(2)，0.01(2)，0.001(2)……二进制小数每一位能表示为$\frac{1}{2}$，$\frac{1}{4}$，$\frac{1}{8}$……因此它要表示某一个十进制的小数，需要用这些部分累加在一起实现。</p>
+<h2 id="IEEE浮点标准"><a href="#IEEE浮点标准" class="headerlink" title="IEEE浮点标准"></a>IEEE浮点标准</h2><p>在生产环境中，一个基本的浮点数都是32位的，不会像上文中一直使用的8位来当数据的大小，IEEE浮点标准中就规定了这32位应该如何使用。</p>
+<p>它将位序列分为三个部分来理解，<br>第一部分：符号，决定这个数是正数还是负数，一般用1表示负数，0表示正数。<br>第二部分：尾数，是一个二进制小数。<br>第三部分：阶码，是对浮点数的加权。</p>
+<p>可以这样去理解，有点像科学计数法，比如：<br>100，我们可以记为$0.1 \times 10^3$，<br>0.257，我们可以记为$0.257 \times 10^0$<br>257，可以记为$0.257 \times 10^3$</p>
+<p>IEEE标准中，给定了32位与64位浮点数，各个部分的格式。<br>32位浮点数：<br>最高位：符号位（1位）-阶码（8位）-尾数（23位）：最低位<br>64位浮点数：<br>最高位：符号位（1位）-阶码（11位）-尾数（52位）：最低位</p>
+<p>我们先假设一个8位的浮点数，并通过将它的数值列在一个表格中来观察学习浮点数的标准是如何工作的。<br>8位浮点数，我们设定<strong>最高的1位是符号位</strong>，0表示正数，1表示负数，<strong>接下来的4位表示阶码</strong>，<strong>最低3位表示尾数</strong>。请看下表。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTYwMjI1MjAxMDEyNzY0?x-oss-process=image/format,png" alt="这里写图片描述"></p>
+<p>上表，只列出了符号位是0的情况。</p>
+<h3 id="规格化数与非规格化数"><a href="#规格化数与非规格化数" class="headerlink" title="规格化数与非规格化数"></a>规格化数与非规格化数</h3><p>我们注意A列的描述，浮点数大体上分为三种情况，<strong>非规格化数</strong>，<strong>规格化数</strong>，<strong>其他值</strong></p>
+<p>非规格化数的特征是，阶码段的位都是0。<br>规格化数的特征是，阶码段不全为0，也不全为1。<br>其他值的特征就是，阶码段全为1。</p>
+<h3 id="指数部分"><a href="#指数部分" class="headerlink" title="指数部分"></a>指数部分</h3><p>然后，我们注意一下D列，有一个<strong>偏置值</strong>的概念，它的值是$2^{k-1}-1$，<strong>k的值是阶码的长度（位宽）</strong>，在我们自定义的8-bit浮点数中，k的值为4，所以偏置值是7。</p>
+<p>阶码E是分两种情况的。<br>当这个浮点数是非规格化数的时候，$E=1-偏置值$<br>当这个浮点数是规格化数的时候，$E=e-偏置值$</p>
+<p>e是阶码段的4-bit位序列所表示的无符号数。</p>
+<p>所以，表格中E列指的是4-bit位序列按无符号数解析的十进制无符号数。</p>
+<p>而F列，则是按是否是规格化数来决定的值。这个偏置值的设定与补码负权的设计是非常相似的。</p>
+<p>最终指数部分就是$2^E$了。</p>
+<h3 id="小数部分"><a href="#小数部分" class="headerlink" title="小数部分"></a>小数部分</h3><p>小数部分M是由最后三位决定的，它同样是分情况的。</p>
+<p>当这个浮点数是非规格化数的时候，位序列BBB应当理解为0.BBB，也就是整数部分为0的二进制小数。<br>当这个浮点数是规格化数的时候，位序列BBB应当理解为1.BBB，也就是整数部分为1的二进制小数。</p>
+<p>此时，对照表格的H列与I列，即可明白它们的含义。</p>
+<h3 id="浮点数的值"><a href="#浮点数的值" class="headerlink" title="浮点数的值"></a>浮点数的值</h3><p>最终，这个浮点数的值就这样得出来了$value=sign \times 2^E \times M$。sign是第一位决定符号的。</p>
+<h1 id="抽象数据模型（Abstract-Data-Models）"><a href="#抽象数据模型（Abstract-Data-Models）" class="headerlink" title="抽象数据模型（Abstract Data Models）"></a>抽象数据模型（Abstract Data Models）</h1><p>最近无意间看到一个这样的概念，与计算机中的数有关，就在这里提及下。</p>
+<blockquote>
+<p>应用与操作系统都有一个抽象数据模型，大部分应用都没有显式的表现出这个模型，但是它会影响到代码的编写，在32 bits programming model（ILP32）上，integer, long, pointer都是32 bits的，大部分开发者都没有意识到这一点。</p>
+</blockquote>
+<blockquote>
+<p>现在系统扩展到64 bits，如果把所有的数据类型都扩展到64位是非常浪费的，因为很多应用并不需要真的用到64位那么大的数据格式，但是pointer却需要扩展到64位，所以在LLP64/P64上，pointer被扩展到64位，其他的仍然保持32位。</p>
+</blockquote>
+<p>以上内容翻译自<a href="https://msdn.microsoft.com/zh-cn/library/windows/desktop/aa384083(v=vs.85).aspx" target="_blank" rel="noopener">Abstract Data Models</a></p>
+<p>抽象数据模型指定了编程语言中几个基础数据类型的大小。</p>
+<p>比如LP64（可能是64-bit Leopard的缩写）是使用在64位OSX系统或者Linux系统上的，它指定了integer为32位，long是64位，pointer是64位。</p>
+<p>还有LLP64，这是windows 64位操作系统所选择的ADM，它的integer/long/pointer分别使用的是32/32/64位。</p>
+<p>更细致的说明与讨论，我已经整理好了参考资料给大家。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>计算机使用一序列的位来记录数据，通常将8位称为1字节（byte）</li>
+<li>4-bit数据刚好可以表示1个16进制数，因此1字节的数据可以用两个16进制数来表示，如：0x00, 0xff</li>
+<li>无符号整数直接将位序列解析成十进制数即可</li>
+<li>有符号整数使用补码编码的方式，最高位解析成负权</li>
+<li>对整数的扩展，计算，转换一般都不会改变位模式（位序列）</li>
+<li>浮点数将位序列分为三部分来解释，符号位，指数部分，与小数部分</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://en.wikipedia.org/wiki/64-bit_computing#64-bit_data_models" target="_blank" rel="noopener">《64-bit data models》</a>wiki上的解释。</li>
+<li><a href="https://msdn.microsoft.com/zh-cn/library/windows/desktop/aa384083(v=vs.85).aspx" target="_blank" rel="noopener">《Abstract Data Models》</a>这篇文档介绍了Abstract Data Model这个概念，提及了ILP32与Win64用的LLP64。</li>
+<li><a href="https://msdn.microsoft.com/zh-cn/library/windows/desktop/aa383751(v=vs.85).aspx" target="_blank" rel="noopener">《Windows Data Types》</a></li>
+<li><a href="https://msdn.microsoft.com/zh-cn/library/windows/desktop/aa384264(v=vs.85).aspx" target="_blank" rel="noopener">《The New Data Types》</a>这两篇文档列举了数据类型的大小。</li>
+<li><a href="http://www.unix.org/version2/whatsnew/lp64_wp.html" target="_blank" rel="noopener">《64-Bit Programming Models: Why LP64?》</a>这篇文档详细比较，讨论几种不同的抽象数据模型。</li>
+<li>《深入理解计算机系统》</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/计算机科学/" rel="tag"># 计算机科学</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/10/28/贝塞尔曲线的实现/" rel="next" title="贝塞尔曲线的实现">
+                <i class="fa fa-chevron-left"></i> 贝塞尔曲线的实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/04/Android 中线程间通信原理分析：Looper, MessageQueue, Handler/" rel="prev" title="Android 中线程间通信原理分析：Looper, MessageQueue, Handler">
+                Android 中线程间通信原理分析：Looper, MessageQueue, Handler <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kross</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/krossford" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="kross:krossford@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#位与二进制"><span class="nav-number">1.</span> <span class="nav-text">位与二进制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十六进制"><span class="nav-number">2.</span> <span class="nav-text">十六进制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#整数"><span class="nav-number">3.</span> <span class="nav-text">整数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#无符号整数的表示"><span class="nav-number">3.1.</span> <span class="nav-text">无符号整数的表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有符号整数的表示"><span class="nav-number">3.2.</span> <span class="nav-text">有符号整数的表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有符号数与无符号数的相互转换"><span class="nav-number">3.3.</span> <span class="nav-text">有符号数与无符号数的相互转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展一个数值的位"><span class="nav-number">3.4.</span> <span class="nav-text">扩展一个数值的位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#整数的加法计算"><span class="nav-number">3.5.</span> <span class="nav-text">整数的加法计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制小数"><span class="nav-number">3.6.</span> <span class="nav-text">二进制小数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IEEE浮点标准"><span class="nav-number">3.7.</span> <span class="nav-text">IEEE浮点标准</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#规格化数与非规格化数"><span class="nav-number">3.7.1.</span> <span class="nav-text">规格化数与非规格化数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指数部分"><span class="nav-number">3.7.2.</span> <span class="nav-text">指数部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小数部分"><span class="nav-number">3.7.3.</span> <span class="nav-text">小数部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点数的值"><span class="nav-number">3.7.4.</span> <span class="nav-text">浮点数的值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象数据模型（Abstract-Data-Models）"><span class="nav-number">4.</span> <span class="nav-text">抽象数据模型（Abstract Data Models）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kross</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">32.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
