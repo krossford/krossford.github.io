@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="##自问自答的两个问题 在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了">
+<meta name="description" content="自问自答的两个问题在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了解决什">
 <meta name="keywords" content="Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android 中线程间通信原理分析：Looper, MessageQueue, Handler">
 <meta property="og:url" content="http://yoursite.com/2016/08/04/Android 中线程间通信原理分析：Looper, MessageQueue, Handler/index.html">
 <meta property="og:site_name" content="kross">
-<meta property="og:description" content="##自问自答的两个问题 在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了">
+<meta property="og:description" content="自问自答的两个问题在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了解决什">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://img.blog.csdn.net/20160316115827197">
-<meta property="og:updated_time" content="2019-09-18T03:09:05.683Z">
+<meta property="og:updated_time" content="2019-09-25T09:00:33.151Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 中线程间通信原理分析：Looper, MessageQueue, Handler">
-<meta name="twitter:description" content="##自问自答的两个问题 在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了">
+<meta name="twitter:description" content="自问自答的两个问题在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：  这一套东西搞出来是为了解决什么问题呢？ 如果让我们来解决这个问题该怎么做？  以上者两个问题，是我最近总结出来的，在我们学习了解一个新的技术之前，最好是先能回答这两个问题，这样你才能对你正在学习的东西有更深刻的认识。 第一个问题：google的程序员们搞出这一套东西是为了解决什">
 <meta name="twitter:image" content="http://img.blog.csdn.net/20160316115827197">
 
 
@@ -390,8 +390,7 @@
       
 
       
-        <p>##自问自答的两个问题</p>
-<p>在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：</p>
+        <h2 id="自问自答的两个问题"><a href="#自问自答的两个问题" class="headerlink" title="自问自答的两个问题"></a>自问自答的两个问题</h2><p>在我们去讨论Handler，Looper，MessageQueue的关系之前，我们需要先问两个问题：</p>
 <ol>
 <li><strong>这一套东西搞出来是为了解决什么问题呢？</strong></li>
 <li><strong>如果让我们来解决这个问题该怎么做？</strong></li>
@@ -718,7 +717,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-中的线程间通信方案"><span class="nav-number">1.</span> <span class="nav-text">Android 中的线程间通信方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Looper"><span class="nav-number">1.1.</span> <span class="nav-text">Looper</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-prepare"><span class="nav-number">1.1.1.</span> <span class="nav-text">Looper.prepare()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-的构造方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">Looper 的构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-loop"><span class="nav-number">1.1.3.</span> <span class="nav-text">Looper.loop()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MessageQueue"><span class="nav-number">1.2.</span> <span class="nav-text">MessageQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MQ的构造方法"><span class="nav-number">1.2.1.</span> <span class="nav-text">MQ的构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MessageQueue-next"><span class="nav-number">1.2.2.</span> <span class="nav-text">MessageQueue.next()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message"><span class="nav-number">1.3.</span> <span class="nav-text">Message</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler"><span class="nav-number">1.4.</span> <span class="nav-text">Handler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler的构造方法（初始化）"><span class="nav-number">1.4.1.</span> <span class="nav-text">Handler的构造方法（初始化）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler-sendMessage"><span class="nav-number">1.4.2.</span> <span class="nav-text">Handler.sendMessage()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler-dispatchMessage"><span class="nav-number">1.4.3.</span> <span class="nav-text">Handler.dispatchMessage()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Message-target与Handler"><span class="nav-number">1.4.4.</span> <span class="nav-text">Message.target与Handler</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#自问自答的两个问题"><span class="nav-number">1.</span> <span class="nav-text">自问自答的两个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-中的线程间通信方案"><span class="nav-number">2.</span> <span class="nav-text">Android 中的线程间通信方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Looper"><span class="nav-number">2.1.</span> <span class="nav-text">Looper</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-prepare"><span class="nav-number">2.1.1.</span> <span class="nav-text">Looper.prepare()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-的构造方法"><span class="nav-number">2.1.2.</span> <span class="nav-text">Looper 的构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Looper-loop"><span class="nav-number">2.1.3.</span> <span class="nav-text">Looper.loop()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MessageQueue"><span class="nav-number">2.2.</span> <span class="nav-text">MessageQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MQ的构造方法"><span class="nav-number">2.2.1.</span> <span class="nav-text">MQ的构造方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MessageQueue-next"><span class="nav-number">2.2.2.</span> <span class="nav-text">MessageQueue.next()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message"><span class="nav-number">2.3.</span> <span class="nav-text">Message</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler"><span class="nav-number">2.4.</span> <span class="nav-text">Handler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler的构造方法（初始化）"><span class="nav-number">2.4.1.</span> <span class="nav-text">Handler的构造方法（初始化）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler-sendMessage"><span class="nav-number">2.4.2.</span> <span class="nav-text">Handler.sendMessage()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler-dispatchMessage"><span class="nav-number">2.4.3.</span> <span class="nav-text">Handler.dispatchMessage()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Message-target与Handler"><span class="nav-number">2.4.4.</span> <span class="nav-text">Message.target与Handler</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
